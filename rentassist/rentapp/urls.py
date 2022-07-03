@@ -19,3 +19,5 @@ router.register('notifications', NotificationViewSet, basename= 'notification')
 
 
 urlpatterns = router.urls
+
+

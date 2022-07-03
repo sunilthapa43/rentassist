@@ -7,6 +7,7 @@ from .serializers import AgreementSerializer, ComplaintSerializer, DepositSerial
 class OwnerViewSet(viewsets.ModelViewSet):
     queryset = Owner.objects.all()
     serializer_class = OwnerSerializer
+    
 class TenantViewSet(viewsets.ModelViewSet):
     queryset = Tenant.objects.all()
     serializer_class = TenantSerializer

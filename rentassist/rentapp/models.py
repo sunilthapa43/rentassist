@@ -112,8 +112,8 @@ class Owner(models.Model):
 
     def __str__(self):
         return self.owner.username
-
-class Tenant(models.Model):
+# no fk user, add name instead
+class Tenant(models.Model): 
     tenant = models.ForeignKey(User, on_delete=models.CASCADE , default= None)
     owner = models.ForeignKey(Owner, on_delete=models.CASCADE)
     image =  models.ImageField(verbose_name= 'tenant-image', null = True, upload_to= 'static/tenant-images/', default = 'static/me.jpg')

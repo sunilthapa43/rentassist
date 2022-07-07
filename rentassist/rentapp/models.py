@@ -114,14 +114,14 @@ class Owner(models.Model):
         return self.owner.username
 # no fk user, add name instead
 class Tenant(models.Model): 
-    tenant = models.ForeignKey(User, on_delete=models.CASCADE , default= None)
+    name = models.CharField(max_length=35,verbose_name='tenant name') 
     owner = models.ForeignKey(Owner, on_delete=models.CASCADE)
-    image =  models.ImageField(verbose_name= 'tenant-image', null = True, upload_to= 'static/tenant-images/', default = 'static/me.jpg')
+    image =  models.ImageField(verbose_name= 'photo', null = True, upload_to= 'static/tenant-images/', default = 'static/me.jpg')
     balance =  models.CharField(max_length=11)
     phone_number =  PhoneNumberField()
     
     def __str__(self):
-        return self.tenant.username
+        return self.tenant_name
 
 class Agreement(models.Model):
     owner =  models.ForeignKey(Owner, on_delete= models.CASCADE)

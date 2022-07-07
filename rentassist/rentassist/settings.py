@@ -52,6 +52,7 @@ INSTALLED_APPS = [
 
 
     'corsheaders',
+    'django_extensions',
     
     'rest_framework',
     'rest_framework.authtoken',
@@ -95,6 +96,16 @@ TEMPLATES = [
         },
     },
 ]
+REST_FRAMEWORK ={
+    'DEFAULT_PERMISSION_CLASSES': [
+        #should change later
+        'rest_framework.permissions.AllowAny',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES' : [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
 
 WSGI_APPLICATION = 'rentassist.wsgi.application'
 
@@ -169,6 +180,8 @@ AUTHENTICATION_BACKENDS = [
 
 ]
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' 
+SITR_ID = 1
 
 CORS_ALLOWED_WHITELIST = [
     "http://127.0.0.1:8000",

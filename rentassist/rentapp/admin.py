@@ -4,7 +4,22 @@ from .models import Notification, OtherPayment, Owner, Tenant, Transaction, Rent
 
 # Register your models here.
 
-admin.site.register(Owner)
+
+@admin.register(Owner)
+class RatingAdmin(admin.ModelAdmin):
+    list_display = (
+        'owner',
+        'email',
+        'phone_number',
+        'balance'
+        
+    )
+    fields = (
+        'owner',
+        'email',
+        'phone_number',
+        'balance'
+    )
 admin.site.register(Tenant)
 admin.site.register(Transaction)
 admin.site.register(Rent)

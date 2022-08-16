@@ -13,17 +13,21 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
+# from django.contrib import admin
+from baton.autodiscover import admin
 from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('baton/', include('baton.urls')),
     path('api/', include('rentapp.urls')),
     path('api-auth/', include('rest_framework.urls')), #permissions admin login
+    #user registration
+    path('api/dj-auth/registration', include('dj_rest_auth.registration.urls')),
     path('api/dj-rest-auth/', include('dj_rest_auth.urls')),  #login, logout, pwreset 
     
     #user registration
-    path('api/dj-rest-auth/registration', include('dj_rest_auth.registration.urls'))
+    path('api/dj-rest-auth/registration/', include('dj_rest_auth.registration.urls'))
 
 
 ]

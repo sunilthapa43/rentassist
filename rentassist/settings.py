@@ -12,11 +12,12 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 import os
+import sys
 import django_heroku
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+sys.path.insert(0, os.path.join(str(BASE_DIR), 'apps'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -31,11 +32,11 @@ ALLOWED_HOSTS = [
     '*',
 ]
 
+AUTH_USER_MODEL = 'users.CustomUser'
 
 # Application definition
 
-INSTALLED_APPS = [
-    'baton',
+PRELOADED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -43,15 +44,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     #'django.contrib.sites',
-
-
-    'rentapp',
+]
+THIRD_PARTY_APPS = [
     'phonenumber_field',
-
-
     'corsheaders',
     'django_extensions',
-    
     'rest_framework',
     'rest_framework.authtoken',
     'allauth',
@@ -59,11 +56,19 @@ INSTALLED_APPS = [
     'allauth.account',
     'dj_rest_auth',
     'dj_rest_auth.registration',
-    'baton.autodiscover'
-
-
-
+    
 ]
+LOCAL_APPS = [
+    'users.apps.UsersConfig',
+    'rentapp.apps.RentappConfig',
+    'ocr.apps.OcrConfig',
+    'payment.apps.PaymentConfig',
+    'chat.apps.ChatConfig',
+    
+]
+LAST_LOADED_APPS = ['baton.autodiscover']
+
+INSTALLED_APPS = ['baton'] + PRELOADED_APPS + THIRD_PARTY_APPS + LOCAL_APPS + LAST_LOADED_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -107,7 +112,15 @@ REST_FRAMEWORK ={
 }
 
 WSGI_APPLICATION = 'rentassist.wsgi.application'
-
+ASGI_APPLICATION = 'mysite.asgi.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
@@ -188,6 +201,11 @@ BATON = {
     
 }
 
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER': 'users.serializers.CustomRegisterSerializer',
+    'USER_DETAILS_SERIALIZER': 'users.serializers.CustomUserDetailsSerializer',
+}
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
@@ -238,6 +256,39 @@ CORS_ALLOWED_WHITELIST = [
     "http://127.0.0.1:8080",
      
 ]
+BATON = {
+    'MENU_ALWAYS_COLLAPSED':
+        False,
+    'COLLAPSABLE_USER_AREA':
+        True,
+    'CHANGELIST_FILTERS_FORM':
+        True,
+    'MESSAGES_TOASTS':
+        True,
+    'SITE_HEADER':
+        'Rent Assist',
+    'SITE_TITLE':
+        'Rent Assist',
+    'COPYRIGHT':
+        'Rent Assist @2022',
+    'POWERED_BY':
+        'The3Devs',
+    'SUPPORT_HREF':
+        'support@rentassist.com.np',
+    'CONFIRM_UNSAVED_CHANGES':
+        True,
+    'SHOW_MULTIPART_UPLOADING':
+        True,
+    'ENABLE_IMAGES_PREVIEW':
+        True,
+    'CHANGELIST_FILTERS_IN_MODAL':
+        True,
+    'GRAVATAR_DEFAULT_IMG':
+        'mp',
+    'LOGIN_SPLASH':
+        None,
+}
+
 
 import dj_database_url
 db_from_env = dj_database_url.config()

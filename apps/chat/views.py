@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.http import JsonResponse
+from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from .serializers import MessageSerializer, MessageViewSerializer
@@ -15,20 +15,33 @@ class ChatAPIView(AuthByTokenMixin, GenericAPIView):
     def get(self, request, *args, **kwargs):
         serializer = MessageViewSerializer(data=request.data)
         if serializer.is_valid():
-            sender = serializer.validated_data['sender']
+            sender = request.user
             receiver = serializer.validated_data['receiver']
-            message = Message.objects.filter(sender=sender, receiver=receiver) | Message.objects.filter(sender=receiver, receiver=sender)
-            if message.exists():
-                for msg in message:
-                    msg.is_read =True
+            sent_message = Message.objects.filter(sender=sender, receiver=receiver)
+            received_message = Message.objects.filter(sender=receiver, receiver=sender)
+            if sent_message.exists() or received_message.exists():
+                sent_messages = serializers.serialize('json', sent_message)
+                received_messages = serializers.serialize('json', received_message)
+                for msg in received_message:
+                    msg.is_read=True
                     msg.save()
-            response = {
-                "succes":True,
-                "message":message,
-                "data": serializer.data
+                response = {
+                    "succes":True,
+                    "message":"Successfully fetched the conversation",
+                    "sent_message":sent_messages,
+                    "received_message": received_messages
+                }
+                return Response(response)
+            response ={
+                "success":False,
+                "message":"No messages"
             }
-        
             return Response(response)
+        response = {
+            "success": False,
+            "message": 'Invalid request'
+        }
+        return Response(response)
     
     def post(self, request, *args, **kwargs):
         serializer = MessageSerializer(data=request.data)

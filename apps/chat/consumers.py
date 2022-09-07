@@ -34,14 +34,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = event['message']
         sender = event['sender']
         receiver = event['receiver']
-
+        print('chat_msg fn is called')
         await self.send(text_data=json.dumps({
             'message': message,
             'sender': sender,
             'receiver': receiver
         }))
+        print('chat_msg fn is executed')
 
     @sync_to_async
     def save_message(self, sender, receiver, message):
+        print('csave msg called')
         Message.objects.create(sender=sender, receiver=receiver, message=message)
+        print('save msg executed')
 

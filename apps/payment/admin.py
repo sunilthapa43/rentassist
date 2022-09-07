@@ -6,15 +6,18 @@ from .models import Transaction
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
     list_display = (
-        'success',
         'initiator',
         'amount',
-        'payment_token'
+        'payment_token',
+        'transaction_status',
+        'payment_response'
+
     )
-    fields = (
-        'success',
+    fields = ( 
         'initiator',
         'amount',
-        'payment_token'
+        'payment_token',
+        'transaction_status',
+        'payment_response'
     )
 

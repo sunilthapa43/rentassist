@@ -1,1 +1,7 @@
 renv/
+.vscode
+staticfiles
+static
+.env
+db.sqlite3
+erd.dot

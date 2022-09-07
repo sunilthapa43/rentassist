@@ -11,7 +11,7 @@ class ElectricityUnit(models.Model):
     previous_month_reading = models.DecimalField(verbose_name=('previous meter reading'), decimal_places=1, max_digits=6, null = True, blank=True)
     previous_month_units = models.DecimalField(verbose_name=('previous month units'), decimal_places=1, max_digits=6, null = True, blank=True)
     
-
+    # if the user paid, then electricity cant be partially paid, on payment set the paid flag to true
     payment_status = models.BooleanField(default=False)
     # if not paid add the previous month units to current units
     total_payable_units = models.DecimalField(decimal_places=1,max_digits=5, blank=True)
@@ -19,4 +19,3 @@ class ElectricityUnit(models.Model):
     def __str__(self):
         return self.user.username
     
-    # todo migrations ocr

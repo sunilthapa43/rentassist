@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CustomUser
+from .models import CustomUser, Owner, Tenant
 
 @admin.register(CustomUser)
 class UserAdmin(admin.ModelAdmin):
@@ -18,3 +18,20 @@ class UserAdmin(admin.ModelAdmin):
         'phone_number',
         'image'       
     )
+
+
+
+@admin.register(Tenant)
+class TenantAdmin(admin.ModelAdmin):
+    list_display = (
+        
+        'tenant',
+        'owner',
+        )
+    fields = (
+        
+        'tenant',
+        'owner',
+        )
+
+admin.site.register(Owner)

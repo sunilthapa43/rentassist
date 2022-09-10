@@ -15,6 +15,6 @@ class AgreementAdmin(admin.ModelAdmin):
         'updated',
         'deadline', 
     )
-
+    readonly_fields = ['created']
 
 admin.site.register(Document)

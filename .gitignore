@@ -5,3 +5,4 @@ static
 .env
 erd.dot
 db.sqlite3
+__pycache__

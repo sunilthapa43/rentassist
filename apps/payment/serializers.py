@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Transaction
+from .models import OtherPayment, Transaction
 
 class KhaltiVerifySerializer(serializers.ModelSerializer):
     model=Transaction
@@ -7,4 +7,12 @@ class KhaltiVerifySerializer(serializers.ModelSerializer):
         'initiator',
         'paid_amount',
         'payment_token'
+    )
+
+class OtherPaymentSerializer(serializers.ModelSerializer):
+    model = OtherPayment
+    fields = (
+        'initiator',
+        'amount',
+        'remarks'
     )

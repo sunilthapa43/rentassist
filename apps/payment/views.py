@@ -2,8 +2,8 @@ from payment.khalti import Khalti
 from rentapp.models import Tenant
 from rentassist.settings import BASE_DIR
 from rentassist.utils.views import AuthByTokenMixin
-from .serializers import KhaltiVerifySerializer
-from rentassist.utils.response import prepare_response
+from .serializers import KhaltiVerifySerializer, OtherPaymentSerializer
+from rentassist.utils.response import exception_response, prepare_response
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from .models import Transaction
@@ -27,7 +27,6 @@ class KhaltiVerifyView(AuthByTokenMixin, GenericAPIView):
     serializer_class=KhaltiVerifySerializer
     
     def post(self, request, *args, **kwargs):
-
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
             response = prepare_response(success=False,
@@ -42,7 +41,6 @@ class KhaltiVerifyView(AuthByTokenMixin, GenericAPIView):
 
         payment_response = khalti.verify_request()
         if 'idx' in payment_response:
-
             Transaction.objects.create(
                 initiator=self.request.user,
                 paid_amount=payment_response['amount'],
@@ -110,4 +108,29 @@ class KhaltiVerifyView(AuthByTokenMixin, GenericAPIView):
 
 
 class OtherPaymentAPIView(AuthByTokenMixin, GenericAPIView):
-    pass
+    """Can only be added by the owner himself"""
+    
+    serializer_class = OtherPaymentSerializer
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        
+        if not serializer.is_valid():
+            response = prepare_response(success=False,
+                                        message='Invalid data',
+                                        errors=serializer.errors)
+            return Response(response, status=400)
+        
+        else:
+            if not request.user.is_owner:
+                response = prepare_response(success=False,
+                                        message='Only owner can use this API to update balance',
+                                        )
+                return Response(response)
+            try:
+                response = prepare_response(success=True,
+                                            message=f'Payment successful',
+                                            data=serializer.data
+                                            )
+                return Response(response, status=200)
+            except Exception as e:
+                return exception_response(e, serializer)

@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from requests import Response
 from rentassist.utils.response import prepare_response
 
@@ -19,4 +19,12 @@ class TenantViewSet(AuthByTokenMixin, ModelViewSet):
         owner = Owner.objects.get(owner = request.user).id
         queryset =  Tenant.objects.filter(owner=owner)
         serializer = TenantSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None, *args, **kwargs):
+        owner = Owner.objects.get(owner=request.user).id
+        queryset = Tenant.objects.filter(owner=owner)
+        print(queryset)
+        tenant = get_object_or_404(queryset, pk = pk)
+        serializer = TenantSerializer(tenant)
         return Response(serializer.data)

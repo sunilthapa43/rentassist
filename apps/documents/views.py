@@ -29,6 +29,10 @@ class AgreementViewSet(AuthByTokenMixin, ModelViewSet):
             username = tenant.username
             agreement = Agreement.objects.get(tenant = tenant)
             if agreement:
+                rent_price = agreement.price
+                water_usage_price = agreement.water_usage_price
+                electricity_rate = agreement.electricity_rate
+                internet_price = agreement.internet_price
                 created = agreement.created
                 updated = agreement.updated
                 deadline = agreement.deadline
@@ -38,6 +42,10 @@ class AgreementViewSet(AuthByTokenMixin, ModelViewSet):
                     "message": "Your Agreement details fetched successfully",
                     "name": username,
                     "created": created,
+                    "rent_price":rent_price,
+                    "water_usage_price":water_usage_price,
+                    "electricity_rate":electricity_rate,
+                    "internet_price":internet_price,
                     "updated": updated,
                     "deadline": deadline,  
                 }
@@ -64,6 +72,10 @@ class AgreementViewSet(AuthByTokenMixin, ModelViewSet):
         
         try:
             tenant = serializer.validated_data['tenant']
+            price =  serializer.validated_data['price']
+            internet_price =  serializer.validated_data['internet_price']
+            water_usage_price =  serializer.validated_data['water_usage_price']
+            electricity_rate =  serializer.validated_data['electricity_rate']
             created = serializer.validated_data['created']
             updated = serializer.validated_data['updated']
             deadline = serializer.validated_data['deadline']
@@ -72,11 +84,17 @@ class AgreementViewSet(AuthByTokenMixin, ModelViewSet):
 
             if not obj:
                 instance = Agreement.objects.create(tenant=tenant, 
-                           created = created, updated = updated, deadline = deadline)
+                           created=created,
+                           updated=updated,
+                           deadline=deadline, 
+                           price=price, 
+                           water_usage_price=water_usage_price, 
+                           electricity_rate=electricity_rate, 
+                           internet_price=internet_price )
                 instance.save()
                 response = {
                     "success": True,
-                    "message": "Successfully added contract",
+                    "message": "Successfully formed contract",
                     "data": serializer.data
                 }
                 return Response(response)

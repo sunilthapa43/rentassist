@@ -5,16 +5,23 @@ from .models import Agreement, Document
 class AgreementAdmin(admin.ModelAdmin):
     list_display = (
         'tenant',
-        'created',
-        'updated',
+        'price',
+        'internet_price',
+        'water_usage_price',
+        'nagarpalika_fohr_price',
+        'electricity_rate',
         'deadline',   
     )
     fields = (
         'tenant',
-        'created',
-        'updated',
+        'price',
+        'internet_price',
+        'water_usage_price',
+        'nagarpalika_fohr_price',
+        'electricity_rate',
         'deadline', 
+        
     )
-    readonly_fields = ['created']
+    readonly_fields = ['created','updated']
 
 admin.site.register(Document)

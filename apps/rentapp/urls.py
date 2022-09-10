@@ -1,13 +1,13 @@
 from django.urls import path
 from rest_framework.routers import DefaultRouter
-from .views import RentViewSet
+from .views import CompalaintViewSet
 
 
 
 router = DefaultRouter()
-router.register('rent', RentViewSet, basename= 'rent')
+# router.register('rent', RentViewSet, basename= 'rent')
 
-# router.register('complaints', ComplaintViewSet, basename= 'complaint')
+router.register('complaints',CompalaintViewSet, basename= 'complaint')
 # router.register('notifications', NotificationViewSet, basename= 'notification')
 
 

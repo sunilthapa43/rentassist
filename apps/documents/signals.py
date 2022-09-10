@@ -5,14 +5,16 @@ from documents.models import Agreement
 
 #sending and making signals
 
-deadline_approach = Signal()
+agreement_deadline_approach = Signal()
 approaching_deadlines = Agreement.objects.filter(deadline = datetime.now().date()+timedelta(days=2))
-for all in approaching_deadlines:
-    all.deadline_approach.send()
+if approaching_deadlines:
+    for all in approaching_deadlines:
+        all.agreement_deadline_approach.send()
 
 
-deadline_skipped =  Signal()
+agreement_deadline_skipped =  Signal()
 skipped_deadlines = Agreement.objects.filter(deadline = datetime.now().date() - timedelta(days=1))
-for all in skipped_deadlines:
-    all.deadline_skipped.send()
-#receiver(deadline_notification)
+if skipped_deadlines:
+    for all in skipped_deadlines:
+        all.agreement_deadline_skipped.send()
+    #receiver(deadline_notification)

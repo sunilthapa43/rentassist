@@ -1,23 +1,30 @@
 from django.contrib import admin
-from .models import  Complaint, Deposit
+from .models import  Complaint, Rent
 
 
-@admin.register(Deposit)
-class DepositAdmin(admin.ModelAdmin):
+@admin.register(Rent)
+class RentAdmin(admin.ModelAdmin):
     list_display = (
         'tenant',
-        'amount',
-        'title',
-        'remarks', 
-        'date'  
+        'this_month_rent',
+        'amount_to_be_paid',
+        'amount_paid_this_month', 
+        'due_amount',
+        'status',
+        'paid_at'  
     )
     fields = (
         'tenant',
-        'amount',
-        'title',
-        'remarks',
-        'date' 
+        'this_month_rent',
+        'amount_to_be_paid',
+        'amount_paid_this_month', 
+        'due_amount',
+        'status',
+        'paid_at'  
     )
+
+    readonly_fields = ('paid_at', 'next_payment_schedule')
+      
 
 @admin.register(Complaint)
 class ComplaintAdmin(admin.ModelAdmin):

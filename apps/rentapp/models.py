@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from django.db import models
 
 from users.models import Tenant
@@ -34,24 +35,34 @@ class Complaint(models.Model):
 
     def __str__(self) -> str:
         return f'{self.tenant} complains on {self.title}'
+        
+
 class Rent(models.Model):
-    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, related_name='rent')
-    price = models.IntegerField(verbose_name='rent amount', null=False, blank=False)
-    internet_price = models.DecimalField(max_digits=4, decimal_places=2, blank = True, null=True)
-    water_usage_price = models.DecimalField(max_digits=4, decimal_places=2, blank = True, null=True)
-    electricity_rate = models.DecimalField(max_digits=3, decimal_places=2, verbose_name='electricity charge per unit')
+    class Status(models.TextChoices):
+        FULLLY_PAID = 'F', ('Fully Paid')
+        PARTIALLY_PAID = 'P', ('Partially Paid')
+        UNPAID = 'U', ('Unpaid')
     
-    def __str__(self) -> str:
-        return f'{self.tenant} has room rent of Rs. {self.price}'       
+    tenant = models.ForeignKey(Tenant, on_delete=models.PROTECT, verbose_name='who pays the rent', related_name='rent_payer')
+    this_month_rent = models.DecimalField(max_digits=8, decimal_places=2)
+    amount_to_be_paid = models.DecimalField(max_digits=8, decimal_places=2) #this_month_rent + due_amount
+    amount_paid_this_month = models.DecimalField(max_digits=8, decimal_places=2)
+    due_amount = models.DecimalField(max_digits=8, decimal_places=2, verbose_name='remaining amount')
+    status = models.CharField(max_length=25, verbose_name='payment status', choices=Status.choices)
+    paid_at = models.DateField(auto_now=True)
+    next_payment_schedule = models.DateField(default=datetime.now().date() + timedelta(days=30), verbose_name='next payment schedule')
 
 
-class Deposit(models.Model):
-    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, related_name='deposit')
-    amount = models.DecimalField(decimal_places=2, max_digits=10)
-    title =  models.CharField(max_length=30, verbose_name='deposit title')
-    remarks = models.CharField(max_length=50)
-    date =  models.DateTimeField(auto_now_add=True)
+    def total_amount(self):
+        total = self.this_month_rent + self.due_amount
+        return total
 
-
+    def schedule_deadline(self, days):
+        schedule =  datetime.now().date() + timedelta(days=days)
+        return schedule
+    
+    def calculate_due(self):
+        due = self.amount_to_be_paid - self.amount_paid_this_month
+        return due
 # have owner add rooms or flats, its image when tenant comes and takes one the owner assigns a room while adding the tenant,
 #  this way it is easier if same tenant buys 2 different rooms or apartments

@@ -2,9 +2,6 @@ from .models import Complaint, Rent
 from rest_framework import viewsets
 from .serializers import  ComplaintSerializer, RentSerializer
 # Create your views here.
-
-
-
      
 class RentViewSet(viewsets.ModelViewSet):
     queryset = Rent.objects.all()

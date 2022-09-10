@@ -9,7 +9,8 @@ NOTIFICATION_TYPES = [
     ('S','Deadline Skipped'),
     ('C', 'Complaint'),
     ('P', 'Payment'),
-    ('O', 'Other Payment')
+    ('O', 'Other Payment'),
+    ('A', 'Agreement Formed or Updated')
 ]
 
 class Notification(models.Model):

@@ -65,6 +65,8 @@ LOCAL_APPS = [
     'ocr.apps.OcrConfig',
     'payment.apps.PaymentConfig',
     'chat.apps.ChatConfig',
+    'documents.apps.DocumentsConfig',
+    'notification.apps.NotificationConfig'
     
 ]
 LAST_LOADED_APPS = ['baton.autodiscover']

@@ -5,6 +5,6 @@ class KhaltiVerifySerializer(serializers.ModelSerializer):
     model=Transaction
     fields = (
         'initiator',
-        'amount',
+        'paid_amount',
         'payment_token'
     )

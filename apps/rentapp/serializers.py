@@ -1,12 +1,8 @@
 from rest_framework import serializers
 
-from .models import   Complaint, Deposit, Notification, Rent, Tenant
+from .models import   Complaint, Deposit, Rent
 
 
-class TenantSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Tenant
-        fields = "__all__"
 
 
 class RentSerializer(serializers.ModelSerializer):
@@ -27,10 +23,4 @@ class ComplaintSerializer(serializers.ModelSerializer):
         model = Complaint
         fields = "__all__"
 
-
-
-class NotificationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Notification
-        fields = "__all__"
 

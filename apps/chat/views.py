@@ -1,6 +1,6 @@
-from django.contrib.auth import get_user_model
+
 from django.core import serializers
-from django.views.decorators.csrf import csrf_exempt
+
 from rest_framework.response import Response
 from .serializers import MessageSerializer, MessageViewSerializer
 
@@ -8,7 +8,6 @@ from rentassist.utils.views import AuthByTokenMixin
 from .models import Message
 from rest_framework.generics import GenericAPIView
 from rest_framework.parsers import JSONParser
-User = get_user_model
 
 class ChatAPIView(AuthByTokenMixin, GenericAPIView):
     serializer_classes = [MessageSerializer, MessageViewSerializer]

@@ -1,6 +1,5 @@
 import decimal as D
 import os
-from tkinter import Image
 from rentassist.settings import BASE_DIR
 
 from apps.ocr.ocr import ocr
@@ -33,11 +32,12 @@ class ElectricityUnitView(AuthByTokenMixin, GenericAPIView):
                 
                 
             else:
-                obj.extracted_reading = extracted_digits
-                
-                #previous_meter_reading = obj.current_reading
-                # total_units_this_month = previous_meter_reading - extracted_digits
-                #obj.current_reading = extracted_digits
+                previous_meter_reading = obj.current_reading
+                previous_month_units = obj.current_units
+
+                obj.current_reading = extracted_digits
+                obj.current_units = extracted_digits - previous_month_units
+                obj.previous_month_reading = previous_meter_reading
                 obj.save()
                 
             response = {

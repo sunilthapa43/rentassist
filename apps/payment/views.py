@@ -1,7 +1,5 @@
 from payment.khalti import Khalti
 from rentapp.models import Tenant
-from PIL import Image
-from reportlab.lib.units import cm
 from rentassist.settings import BASE_DIR
 from rentassist.utils.views import AuthByTokenMixin
 from .serializers import KhaltiVerifySerializer
@@ -39,7 +37,7 @@ class KhaltiVerifyView(AuthByTokenMixin, GenericAPIView):
 
         khalti = Khalti(user=self.request.user,
                         token=serializer.data['token'],
-                        amount=serializer.data['amount'],
+                        amount=serializer.data['paid_amount'],
                         )
 
         payment_response = khalti.verify_request()
@@ -47,7 +45,7 @@ class KhaltiVerifyView(AuthByTokenMixin, GenericAPIView):
 
             Transaction.objects.create(
                 initiator=self.request.user,
-                amount=payment_response['amount'],
+                paid_amount=payment_response['amount'],
                 payment_token=payment_response['token'],
                 transaction_response=payment_response)
 

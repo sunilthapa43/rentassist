@@ -1,25 +1,5 @@
 from django.contrib import admin
-from .models import Notification, Tenant, Complaint, Deposit
-
-
-@admin.register(Tenant)
-class TenantAdmin(admin.ModelAdmin):
-    list_display = (
-        
-        'tenant',
-        'owner',
-        'is_tenant'
-   
-    )
-    fields = (
-        
-        'tenant',
-        'owner',
-        'is_tenant'
-    
-    )
-
-
+from .models import  Complaint, Deposit
 
 
 @admin.register(Deposit)
@@ -39,6 +19,23 @@ class DepositAdmin(admin.ModelAdmin):
         'date' 
     )
 
-admin.site.register(Complaint)
-admin.site.register(Notification)
+@admin.register(Complaint)
+class ComplaintAdmin(admin.ModelAdmin):
+    list_display = (
+        'tenant',
+        'title',
+        'image',
+        'description', 
+        'urgency_level'  
+    )
+    fields = (
+        'tenant',
+        'title',
+        'image',
+        'description',
+        'urgency_level' 
+    )
+
+
+
 

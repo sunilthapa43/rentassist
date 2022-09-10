@@ -7,7 +7,7 @@ from .models import Transaction
 class TransactionAdmin(admin.ModelAdmin):
     list_display = (
         'initiator',
-        'amount',
+        'paid_amount',
         'payment_token',
         'transaction_status',
         'payment_response'
@@ -15,7 +15,7 @@ class TransactionAdmin(admin.ModelAdmin):
     )
     fields = ( 
         'initiator',
-        'amount',
+        'paid_amount',
         'payment_token',
         'transaction_status',
         'payment_response'

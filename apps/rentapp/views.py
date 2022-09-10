@@ -1,12 +1,10 @@
-from .models import  Tenant,Complaint, Notification, Rent
+from .models import Complaint, Rent
 from rest_framework import viewsets
-from .serializers import  ComplaintSerializer,  NotificationSerializer,  RentSerializer,  TenantSerializer 
+from .serializers import  ComplaintSerializer, RentSerializer
 # Create your views here.
 
 
-class TenantViewSet(viewsets.ModelViewSet):
-    queryset = Tenant.objects.all()
-    serializer_class = TenantSerializer
+
      
 class RentViewSet(viewsets.ModelViewSet):
     queryset = Rent.objects.all()
@@ -16,7 +14,4 @@ class CompalaintViewSet(viewsets.ModelViewSet):
     queryset = Complaint.objects.all()
     serializer_class = ComplaintSerializer
 
-class NotificationViewSet(viewsets.ModelViewSet):
-    queryset = Notification.objects.all()
-    serializer_class = NotificationSerializer
 

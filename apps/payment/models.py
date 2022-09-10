@@ -1,13 +1,6 @@
-from http.client import PROCESSING
-from pyexpat import model
-from secrets import choice
-from tabnanny import verbose
 from django.db import models
-from django.contrib.auth import get_user_model
-
 from rentapp.models import Rent
-User= get_user_model()
-# Create your models here.
+
 
 STATUS_CHOICES = [
         ('PENDING' , 'PENDING'),
@@ -16,9 +9,9 @@ STATUS_CHOICES = [
         ('SUCCESS' , 'SUCCESS'),
 ]
 class Transaction(models.Model):
-    initiator= models.ForeignKey(User, on_delete=models.PROTECT, related_name='payment')
+    initiator= models.ForeignKey('users.Tenant', on_delete=models.PROTECT, related_name='payment')
     payment_token = models.CharField(max_length=50,blank=False,null=False)
-    amount =  models.DecimalField(decimal_places=2, max_digits=10, blank=False, null=False)
+    paid_amount =  models.DecimalField(decimal_places=2, max_digits=10, blank=False, null=False)
     transaction_status = models.CharField(choices = STATUS_CHOICES, max_length=20)
     payment_response = models.JSONField(blank=True, null=True, verbose_name='Transaction response')
     
@@ -27,21 +20,34 @@ class Transaction(models.Model):
 
 
 class OtherPayment(models.Model):
-    initiator = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name='Other payment', related_name='other_payment')
+    initiator = models.ForeignKey('users.Tenant', on_delete=models.PROTECT, verbose_name='Other payment', related_name='other_payment')
     amount = models.DecimalField(decimal_places=2, max_digits=10, blank=False, null=False)
     date = models.DateField(verbose_name='Paid At')
     remarks = models.CharField(verbose_name='remarks', max_length=255, blank=False)
     
+
     def __str__(self):
-        return f'{self.initiator.username} has paid Rs. { self.amount}'
+        return f'{self.initiator} has paid Rs. {self.amount}'
     class Meta:
         ordering = ['date']
 
 
-class TotalRent(models.Model):
-    tenant = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='total amount to be paid', related_name='total_rent')
-    total_amount = models.DecimalField(max_digits=7, decimal_places=2) #Electricity, 
+class PayRent(models.Model):
+    class Status(models.TextChoices):
+        FULLLY_PAID = 'FULL', ('Fully Paid')
+        PARTIALLY_PAID = 'PARTIAL', ('Partially Paid')
+
+    
+    rent = models.ForeignKey(Rent, on_delete=models.CASCADE, verbose_name='Rent', related_name="total_rent")
     online_payment_amount = models.ForeignKey(Transaction, on_delete=models.PROTECT, null=True, blank=True)
-    other_payment_amount = models.ForeignKey(OtherPayment, on_delete=models.CASCADE, null=True, blank=True)
+    other_payment_amount = models.ForeignKey(OtherPayment, on_delete=models.PROTECT, null=True, blank=True)
     remaining_balance = models.DecimalField(max_digits=7, decimal_places=2)
+    status = models.CharField(max_length=25, verbose_name='payment status', choices=Status.choices)
+
+    def __str__(self) -> str:
+        if self.online_payment_amount and self.online_payment_amount.amount >= self.rent.total_rent:
+            msg = f'{self.rent.tenant} has {self.status} paid {self.online_payment_amount}'
+        elif self.other_payment_amount and self.other_payment_amount.amount >= self.rent.total_rent:
+            msg = f'{self.rent.tenant} has {self.status} paid {self.online_payment_amount}'
+        return msg
     

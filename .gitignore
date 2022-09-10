@@ -3,5 +3,5 @@ renv/
 staticfiles
 static
 .env
-db.sqlite3
 erd.dot
+db.sqlite3

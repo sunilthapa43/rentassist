@@ -5,7 +5,7 @@ from payment.models import OtherPayment, Transaction
 from rentapp.models import Complaint
 from .models import Notification
 from documents.signals import agreement_deadline_approach, agreement_deadline_skipped
-# from rentapp.signals import rent_deadline_approach, skipped_rent_deadline
+# deac
 
 
 @receiver(post_save, sender = Complaint)

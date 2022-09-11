@@ -5,6 +5,8 @@ from payment.models import OtherPayment, Transaction
 from rentapp.models import Complaint
 from .models import Notification
 from documents.signals import agreement_deadline_approach, agreement_deadline_skipped
+# from rentapp.signals import rent_deadline_approach, skipped_rent_deadline
+
 
 @receiver(post_save, sender = Complaint)
 def post_complain(sender, instance, created, weak=False, *args, **kwargs):
@@ -136,3 +138,46 @@ def pre_save_agreement(sender, instance, *args, **kwargs):
             noti.save()  
     except Exception as e:
         print(e)
+
+
+
+# @receiver(rent_deadline_approach)
+# def deadline_approach(sender, instance, weak=False, *args, **kwargs):
+#     noti = Notification.objects.create(
+#             tenant=instance.tenant,
+#             title= 'Rent payment schedule for ' + instance.tenant +' is approaching',
+#             target=instance.tenant.owner.owner,
+#             type='D',
+#             is_read=False)
+#     noti.save()
+
+# @receiver(rent_deadline_approach)
+# def deadline_approach(sender,instance, weak=False, *args, **kwargs):
+#     noti = Notification.objects.create(
+#             tenant=instance.tenant,
+#             title= 'Your rent payment schedule is approaching',
+#             target=instance.tenant,
+#             type='D',
+#             is_read=False)
+#     noti.save()
+
+
+# @receiver(skipped_rent_deadline)
+# def skipped_deadline(sender,instance, weak=False, *args, **kwargs):
+#     noti = Notification.objects.create(
+#             tenant=instance.tenant,
+#             title= 'Rent payment schedule for ' + instance.tenant +' is has been skipped',
+#             target=instance.tenant.owner.owner,
+#             type='S',
+#             is_read=False)
+#     noti.save()
+
+# @receiver(skipped_rent_deadline)
+# def skipped_deadline(sender,instance, weak=False, *args, **kwargs):
+#     noti = Notification.objects.create(
+#             tenant=instance.tenant,
+#             title= 'Your rent payment schedule has been skipped',
+#             target=instance.tenant,
+#             type='S',
+#             is_read=False)
+#     noti.save()

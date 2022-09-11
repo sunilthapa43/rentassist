@@ -73,6 +73,10 @@ LAST_LOADED_APPS = ['baton.autodiscover']
 
 INSTALLED_APPS = ['baton'] + PRELOADED_APPS + THIRD_PARTY_APPS + LOCAL_APPS + LAST_LOADED_APPS
 
+CRON_CLASSES = [
+    "rentapp.cron.MyCronJob",
+    # ...
+]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

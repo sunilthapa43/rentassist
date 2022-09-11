@@ -47,6 +47,7 @@ PRELOADED_APPS = [
 ]
 THIRD_PARTY_APPS = [
     'phonenumber_field',
+    'django_celery_beat',
     'corsheaders',
     'django_extensions',
     'rest_framework',
@@ -295,6 +296,11 @@ BATON = {
     'LOGIN_SPLASH':
         None,
 }
+
+# Celery Configuration Options
+CELERY_TIMEZONE = "UTC"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
 
 
 import dj_database_url

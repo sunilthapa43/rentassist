@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from django.db import models
+from notification.models import Notification
 
 from users.models import Tenant
 
@@ -64,5 +65,49 @@ class Rent(models.Model):
     def calculate_due(self):
         due = self.amount_to_be_paid - self.amount_paid_this_month
         return due
+
+    def create_notification(self, days, flag):
+        if days == -1 and flag == 1:
+            type = 'S'
+            target = self.tenant.owner.owner
+            title = f'The rent paying deadline for {self.tenant} has been skipped'
+        if days == 1 and flag == 0:
+            type = 'D'
+            target = self.tenant.tenant
+            title = f'Your rent paying deadline is tomorrow' 
+        elif days == 1 and flag == 1:
+            type = 'D'
+            target = self.tenant.owner.owner
+            title = f'The rent paying deadline for {self.tenant} is tomorrow'
+        elif days == 0 and flag == 0:
+            type = 'D'
+            target = self.tenant.tenant
+            title = f'Today is your scheduled rent paying date'
+    
+        elif days == 0 and flag == 1:
+            type = 'D'
+            target = self.tenant.owner.owner
+            title = f'The rent paying deadline for {self.tenant} is today'
+        
+        
+    
+        elif days == -1 and flag == 0:
+            type = 'S'
+            target = self.tenant.tenant
+            title = f'The deadline for rent payment has been skipped'
+        
+
+        
+        else:
+            pass
+        type = type or 'S'
+        obj = Notification.objects.create(
+            tenant = self.tenant,
+            is_read = False,
+            title = title,
+            type = type ,
+            target = target
+        )
+        obj.save()
 # have owner add rooms or flats, its image when tenant comes and takes one the owner assigns a room while adding the tenant,
 #  this way it is easier if same tenant buys 2 different rooms or apartments

@@ -1,10 +1,13 @@
+from email import message
+from urllib import response
 from django.shortcuts import get_object_or_404, render
 from requests import Response
-from rentassist.utils.response import prepare_response
-
-from rentassist.utils.views import AuthByTokenMixin
-from users.models import Owner, Tenant
-from .serializers import TenantSerializer
+from rentassist.settings import EMAIL_HOST_USER
+from rentassist.utils.response import exception_response, prepare_response
+from django.core.mail import send_mail
+from rentassist.utils.views import AuthByNoneMixin, AuthByTokenMixin
+from users.models import EmailVerification, Owner, Tenant
+from .serializers import EmailVerifySerializer, TenantSerializer
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 
@@ -28,3 +31,46 @@ class TenantViewSet(AuthByTokenMixin, ModelViewSet):
         tenant = get_object_or_404(queryset, pk = pk)
         serializer = TenantSerializer(tenant)
         return Response(serializer.data)
+
+    
+
+class VerifyToken(AuthByNoneMixin, ModelViewSet):
+    serializer_class = EmailVerifySerializer
+    queryset =  EmailVerification.objects.all()
+    def create(self, request, *args, **kwargs):
+        serializer = EmailVerifySerializer(data= request.data)
+        if not serializer.is_valid():
+            response = prepare_response(
+                success=False,
+                message='Invalid Request'
+            )
+            return Response(response)
+        else:
+            try:
+                user = serializer.validated_data['user']
+                token = serializer.validated_data['token']
+                obj = EmailVerification.objects.get(user=user, token=token)
+                if not obj:
+                    response = prepare_response(
+                        success=False,
+                        message='The OTP is invalid, please try again'
+                    )
+                    return Response(response)
+                else:
+                    obj.is_authenticated = True
+                    obj.save()
+                    # send mail here instead of using signals
+                    send_mail(
+                        'Account Verified',
+                        'Your account has been verified successfully',
+                        EMAIL_HOST_USER,
+                        [obj.user.email]
+                    )
+                    response = prepare_response(
+                        success=True,
+                        message='Congratulations, you are considered as an active user now'
+                    )
+                    return Response(response)
+                    
+            except Exception as e:
+                return exception_response(e, serializer)

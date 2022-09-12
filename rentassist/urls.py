@@ -17,6 +17,8 @@ Including another URLconf
 from baton.autodiscover import admin
 from django.urls import path, include
 
+from users.views import VerifyToken
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('baton/', include('baton.urls')),
@@ -27,5 +29,8 @@ urlpatterns = [
     path('api/users/',include('users.urls')),
     #user registration
     path('auth/register/', include('dj_rest_auth.registration.urls')),
-    path('auth/', include('dj_rest_auth.urls')),  #login, logout, pwreset   
+    path('auth/', include('dj_rest_auth.urls')),  #login, logout, pwreset  
+
+    # from users
+    path('auth/verify-email/', VerifyToken.as_view({'post':'create'})) 
 ]

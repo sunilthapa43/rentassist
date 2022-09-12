@@ -1,7 +1,7 @@
 
 from rest_framework import serializers
 from dj_rest_auth.registration.serializers import RegisterSerializer
-from .models import CustomUser, Tenant
+from .models import CustomUser, EmailVerification, Tenant
 from allauth.account.adapter import get_adapter
 
 class CustomRegisterSerializer(RegisterSerializer):
@@ -62,3 +62,9 @@ class TenantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tenant
         fields = '__all__'
+
+
+class EmailVerifySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EmailVerification
+        fields = ('user', 'token')

@@ -6,7 +6,6 @@ from .models import Notification
 from django.core.mail import send_mail
 
 
-mail_sender = 'me'
 def switcher(type):
     to_subject = {
         'D':'Deadline Approach',

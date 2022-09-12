@@ -23,3 +23,10 @@ class Tenant(models.Model):
     owner = models.ForeignKey(Owner, verbose_name='owner', on_delete=models.CASCADE, related_name='owner_of_this_tenant',)
     def __str__(self):
         return self.tenant.username
+
+
+
+class EmailVerification(models.Model):
+    created = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='User', related_name='verify')
+    token = models.CharField(max_length=6, verbose_name='verification code',null=False)

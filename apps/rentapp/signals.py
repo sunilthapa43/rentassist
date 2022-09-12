@@ -75,15 +75,4 @@ def post_payment(sender, instance, created, weak=False, *args, **kwargs):
         obj.save()
 
 
-    
-# sender signal 
-# use cron jobs for deadlines
-# rent_deadline_approach = Signal()
-# approaching_deadlines = Rent.objects.filter(next_payment_schedule = datetime.now().date() + timedelta(days=2))
-# for all in approaching_deadlines:
-#     rent_deadline_approach.send(sender=Rent)
 
-# skipped_rent_deadline = Signal()
-# skipped_rent_deadline = Rent.objects.filter(next_payment_schedule = datetime.now().date() - timedelta(days=1))
-# for all in skipped_rent_deadline:
-#     rent_deadline_approach.send(sender=Rent)

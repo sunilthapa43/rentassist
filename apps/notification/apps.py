@@ -7,3 +7,4 @@ class NotificationConfig(AppConfig):
     
     def ready(self):
         from . import signals
+        from . import send_mail

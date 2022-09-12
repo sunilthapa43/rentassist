@@ -26,7 +26,7 @@ class OtherPayment(models.Model):
     
 
     def __str__(self):
-        return f'{self.initiator} has paid Rs. {self.amount}'
+        return f' {self.initiator} has paid Rs. {self.amount}'
     class Meta:
         ordering = ['date']
 

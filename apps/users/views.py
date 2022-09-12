@@ -34,7 +34,7 @@ class TenantViewSet(AuthByTokenMixin, ModelViewSet):
 
     
 
-class VerifyToken(AuthByNoneMixin, ModelViewSet):
+class VerifyToken(AuthByTokenMixin, ModelViewSet):
     serializer_class = EmailVerifySerializer
     queryset =  EmailVerification.objects.all()
     def create(self, request, *args, **kwargs):
@@ -47,13 +47,14 @@ class VerifyToken(AuthByNoneMixin, ModelViewSet):
             return Response(response)
         else:
             try:
-                user = serializer.validated_data['user']
+                user = request.user
                 token = serializer.validated_data['token']
                 obj = EmailVerification.objects.get(user=user, token=token)
                 if not obj:
                     response = prepare_response(
                         success=False,
-                        message='The OTP is invalid, please try again'
+                        message='The OTP is invalid, please try again',
+                        data=serializer.data
                     )
                     return Response(response)
                 else:
@@ -68,7 +69,8 @@ class VerifyToken(AuthByNoneMixin, ModelViewSet):
                     )
                     response = prepare_response(
                         success=True,
-                        message='Congratulations, you are considered as an active user now'
+                        message='Congratulations, you are considered as an active user now',
+                        data=serializer.data
                     )
                     return Response(response)
                     

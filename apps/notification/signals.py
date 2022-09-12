@@ -5,7 +5,7 @@ from payment.models import OtherPayment, Transaction
 from rentapp.models import Complaint
 from .models import Notification
 from documents.signals import agreement_deadline_approach, agreement_deadline_skipped
-# deac
+
 
 
 @receiver(post_save, sender = Complaint)
@@ -27,7 +27,7 @@ def post_payment(sender, instance, created, weak=False, *args, **kwargs):
     obj = Notification.objects.create(tenant=instance.initiator,
         target=instance.initiator.owner.owner,
         type='P',
-        title=str(instance.initiator) + ' has paid Rs. ' + str(instance.paid_amount),
+        title=str(instance.initiator) + ' has paid Rs. ' + str(instance.paid_amount) + ' via Khalti Payment',
         is_read=False
         )
     obj.save()
@@ -37,14 +37,18 @@ def post_payment(sender, instance, created, weak=False, *args, **kwargs):
 @receiver(post_save, sender=OtherPayment)
 def post_other_payment(sender, instance, created, weak=False, *args, **kwargs):
     if created:
-        obj =  Notification.objects.create(
-            tenant=instance.initiator,
-            # amount=instance.amount,
-            title=str(instance.initiator)+ 'pays' + str(instance.amount) + 'physically',
-            target=instance.initiator.owner.owner,
-            type='O',
-            is_read=False)
-        obj.save()
+        try:
+            obj =  Notification.objects.create(
+                tenant=instance.initiator,
+                # amount=instance.amount,
+                title=str(instance.initiator)+ ' pays ' + str(instance.amount) + ' physically ',
+                target=instance.initiator.owner.owner,
+                type='O',
+                is_read=False)
+            obj.save()
+
+        except Exception as e:
+            print(e)
 
 
 @receiver(agreement_deadline_approach)
@@ -141,6 +145,6 @@ def pre_save_agreement(sender, instance, *args, **kwargs):
 
 
 
-@receiver(post_save, sender= Notification)
-def send_mail(sender, instance, weak=False, *args, **kwargs):
-    print('send mail')
+# @receiver(post_save, sender= Notification)
+# def send_email_on_notification(sender, instance, weak=False, *args, **kwargs):
+#     send_mail()

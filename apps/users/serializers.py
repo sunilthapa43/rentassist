@@ -67,4 +67,4 @@ class TenantSerializer(serializers.ModelSerializer):
 class EmailVerifySerializer(serializers.ModelSerializer):
     class Meta:
         model = EmailVerification
-        fields = ('user', 'token')
+        fields = ('token',)

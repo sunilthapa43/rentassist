@@ -19,11 +19,12 @@ def switcher(type):
 
 @receiver(post_save, sender=Notification)
 def send_email(sender, instance, created, weak=False, *args, **kwargs):
-    type =instance.type
-    subject = switcher(type)
-    send_mail(
-        subject,
-        instance.title,
-        EMAIL_HOST_USER,
-        [instance.target.email]
-    )
+    if created:
+        type = instance.type
+        subject = switcher(type)
+        send_mail(
+            subject,
+            instance.title,
+            EMAIL_HOST_USER,
+            [instance.target.email]
+        )

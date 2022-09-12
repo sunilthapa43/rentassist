@@ -141,43 +141,6 @@ def pre_save_agreement(sender, instance, *args, **kwargs):
 
 
 
-# @receiver(rent_deadline_approach)
-# def deadline_approach(sender, instance, weak=False, *args, **kwargs):
-#     noti = Notification.objects.create(
-#             tenant=instance.tenant,
-#             title= 'Rent payment schedule for ' + instance.tenant +' is approaching',
-#             target=instance.tenant.owner.owner,
-#             type='D',
-#             is_read=False)
-#     noti.save()
-
-# @receiver(rent_deadline_approach)
-# def deadline_approach(sender,instance, weak=False, *args, **kwargs):
-#     noti = Notification.objects.create(
-#             tenant=instance.tenant,
-#             title= 'Your rent payment schedule is approaching',
-#             target=instance.tenant,
-#             type='D',
-#             is_read=False)
-#     noti.save()
-
-
-# @receiver(skipped_rent_deadline)
-# def skipped_deadline(sender,instance, weak=False, *args, **kwargs):
-#     noti = Notification.objects.create(
-#             tenant=instance.tenant,
-#             title= 'Rent payment schedule for ' + instance.tenant +' is has been skipped',
-#             target=instance.tenant.owner.owner,
-#             type='S',
-#             is_read=False)
-#     noti.save()
-
-# @receiver(skipped_rent_deadline)
-# def skipped_deadline(sender,instance, weak=False, *args, **kwargs):
-#     noti = Notification.objects.create(
-#             tenant=instance.tenant,
-#             title= 'Your rent payment schedule has been skipped',
-#             target=instance.tenant,
-#             type='S',
-#             is_read=False)
-#     noti.save()
+@receiver(post_save, sender= Notification)
+def send_mail(sender, instance, weak=False, *args, **kwargs):
+    print('send mail')

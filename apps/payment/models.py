@@ -8,7 +8,7 @@ STATUS_CHOICES = [
         ('SUCCESS' , 'SUCCESS'),
 ]
 class Transaction(models.Model): #KHALTI
-    initiator= models.ForeignKey('users.Tenant', on_delete=models.PROTECT, related_name='payment')
+    initiator= models.ForeignKey('users.Tenant', on_delete=models.CASCADE, related_name='payment')
     payment_token = models.CharField(max_length=50,blank=False,null=False)
     paid_amount =  models.DecimalField(decimal_places=2, max_digits=10, blank=False, null=False)
     transaction_status = models.CharField(choices = STATUS_CHOICES, max_length=20)
@@ -19,7 +19,7 @@ class Transaction(models.Model): #KHALTI
 
 
 class OtherPayment(models.Model):
-    initiator = models.ForeignKey('users.Tenant', on_delete=models.PROTECT, verbose_name='Tenant', related_name='other_payment')
+    initiator = models.ForeignKey('users.Tenant', on_delete=models.CASCADE, verbose_name='Tenant', related_name='other_payment')
     amount = models.DecimalField(decimal_places=2, max_digits=10, blank=False, null=False)
     date = models.DateField(verbose_name='Paid At', auto_now=True)
     remarks = models.CharField(verbose_name='remarks', max_length=255, blank=False)

@@ -2,7 +2,7 @@ from django.db import models
 
 
 class ElectricityUnit(models.Model):
-    tenant = models.ForeignKey('users.Tenant', on_delete=models.PROTECT, verbose_name='tenant')
+    tenant = models.ForeignKey('users.Tenant', on_delete=models.CASCADE, verbose_name='tenant')
     image = models.ImageField(upload_to='static/meter-reader-images/', verbose_name=('meter image'), null=False)
     current_reading = models.DecimalField(verbose_name=('current meter reading'), decimal_places=1, max_digits=6, null = True, blank=True)
     current_units = models.DecimalField(verbose_name=('current units'), decimal_places=1, max_digits=6, null = True, blank=True)

@@ -25,7 +25,7 @@ app.conf.beat_schedule = {
 
 # Load task modules from all registered Django apps.
 app.autodiscover_tasks()
-
+app.conf.timezone = 'UTC'
 
 @app.task(bind=True)
 def debug_task(self):

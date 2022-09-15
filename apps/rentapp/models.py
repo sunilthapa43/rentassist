@@ -44,7 +44,7 @@ class Rent(models.Model):
         PARTIALLY_PAID = 'P', ('Partially Paid')
         UNPAID = 'U', ('Unpaid')
     
-    tenant = models.ForeignKey(Tenant, on_delete=models.PROTECT, verbose_name='who pays the rent', related_name='rent_payer')
+    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, verbose_name='who pays the rent', related_name='rent_payer')
     this_month_rent = models.DecimalField(max_digits=8, decimal_places=2)
     amount_to_be_paid = models.DecimalField(max_digits=8, decimal_places=2) #this_month_rent + due_amount
     amount_paid_this_month = models.DecimalField(max_digits=8, decimal_places=2)

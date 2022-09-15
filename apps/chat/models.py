@@ -4,8 +4,8 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 class Message(models.Model):
-    sender = models.ForeignKey(User, related_name='msg_sender', on_delete=models.PROTECT, verbose_name='sender')
-    receiver = models.ForeignKey(User, related_name='msg_receiver', on_delete=models.PROTECT, verbose_name='receiver')
+    sender = models.ForeignKey(User, related_name='msg_sender', on_delete=models.CASCADE, verbose_name='sender')
+    receiver = models.ForeignKey(User, related_name='msg_receiver', on_delete=models.CASCADE, verbose_name='receiver')
     message = models.TextField()
     is_read = models.BooleanField(default=False, verbose_name='is read')
     sent_at = models.DateTimeField(auto_now_add=True)

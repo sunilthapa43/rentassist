@@ -1,6 +1,4 @@
-from ast import Return
 from celery import shared_task
-from notification.models import Notification
 
 from rentapp.models import Rent
 from datetime import datetime, timedelta

@@ -62,7 +62,12 @@ class TenantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tenant
         fields = '__all__'
-
+        
+class TenantCreationSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Tenant
+        fields = ('owner', 'tenant')
 
 class EmailVerifySerializer(serializers.ModelSerializer):
     class Meta:

@@ -1,4 +1,4 @@
-import decimal as D
+
 import os
 from rentassist.settings import BASE_DIR
 

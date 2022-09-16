@@ -4,7 +4,7 @@ from documents.models import Agreement
 from payment.models import OtherPayment, Transaction
 from rentapp.models import Complaint
 from .models import Notification
-from documents.signals import agreement_deadline_approach, agreement_deadline_skipped
+# from documents.signals import agreement_deadline_approach, agreement_deadline_skipped
 
 
 
@@ -51,50 +51,50 @@ def post_other_payment(sender, instance, created, weak=False, *args, **kwargs):
             print(e)
 
 
-@receiver(agreement_deadline_approach)
-def on_deadline_approach(sender, instance, weak=False, *args, **kwargs):
+# @receiver(agreement_deadline_approach)
+# def on_deadline_approach(sender, instance, weak=False, *args, **kwargs):
 
-    obj =  Notification.objects.create(
-        tenant=instance.tenant,
-        title= 'Your deadline of rent payment is approaching',
-        target=instance.tenant,
-        type='D',
-        is_read=False)
-    obj.save()
+#     obj =  Notification.objects.create(
+#         tenant=instance.tenant,
+#         title= 'Your deadline of rent payment is approaching',
+#         target=instance.tenant,
+#         type='D',
+#         is_read=False)
+#     obj.save()
 
-@receiver(agreement_deadline_approach)
-def on_deadline_approach(sender, instance, weak=False, *args, **kwargs):
+# @receiver(agreement_deadline_approach)
+# def on_deadline_approach(sender, instance, weak=False, *args, **kwargs):
 
-    obj =  Notification.objects.create(
-        tenant=instance.tenant,
-        title= str(instance.tenant) + " 's deadline of rent payment is approaching",
-        target=instance.tenant.owner.owner,
-        type='D',
-        is_read=False)
-    obj.save()
+#     obj =  Notification.objects.create(
+#         tenant=instance.tenant,
+#         title= str(instance.tenant) + " 's deadline of rent payment is approaching",
+#         target=instance.tenant.owner.owner,
+#         type='D',
+#         is_read=False)
+#     obj.save()
 
 
-@receiver(agreement_deadline_skipped)
-def on_agreement_deadline_skipped(sender, instance, weak=False, *args, **kwargs):
+# @receiver(agreement_deadline_skipped)
+# def on_agreement_deadline_skipped(sender, instance, weak=False, *args, **kwargs):
 
-    obj =  Notification.objects.create(
-        tenant=instance.tenant,
-        title= 'Your deadline of rent payment is skipped',
-        target=instance.tenant,
-        type='D',
-        is_read=False)
-    obj.save()
+#     obj =  Notification.objects.create(
+#         tenant=instance.tenant,
+#         title= 'Your deadline of rent payment is skipped',
+#         target=instance.tenant,
+#         type='D',
+#         is_read=False)
+#     obj.save()
 
-@receiver(agreement_deadline_skipped)
-def on_deadline_skipped(sender, instance, weak=False, *args, **kwargs):
+# @receiver(agreement_deadline_skipped)
+# def on_deadline_skipped(sender, instance, weak=False, *args, **kwargs):
 
-    obj =  Notification.objects.create(
-        tenant=instance.tenant,
-        title= str(instance.tenant) + " 's deadline of rent payment is skipped",
-        target=instance.tenant.owner.owner,
-        type='D',
-        is_read=False)
-    obj.save()
+#     obj =  Notification.objects.create(
+#         tenant=instance.tenant,
+#         title= str(instance.tenant) + " 's deadline of rent payment is skipped",
+#         target=instance.tenant.owner.owner,
+#         type='D',
+#         is_read=False)
+#     obj.save()
 
 
 # also add a flag in rent paying record

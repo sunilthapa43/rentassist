@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from  phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth import get_user_model
+
 class CustomUser(AbstractUser):
     is_owner = models.BooleanField(default=False, verbose_name='Is owner?')
     phone_number = PhoneNumberField(null=False)
@@ -12,7 +13,7 @@ User=get_user_model()
 
 
 class Owner(models.Model):
-    owner = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='owner user', related_name='owner_user')
+    owner = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='owner name', related_name='owner_user')
     
     def __str__(self) -> str:
         return f'{self.owner.username}'

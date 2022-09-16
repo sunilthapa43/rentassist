@@ -20,7 +20,7 @@ from django.urls import path, include
 from users.views import VerifyToken
 
 urlpatterns = [
-    # path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
     path('baton/', include('baton.urls')),
     path('api/', include('rentapp.urls')),
     path('api/payment/', include('payment.urls')),

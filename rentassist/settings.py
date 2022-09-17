@@ -10,8 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
-from re import A
-from decouple import config
 from pathlib import Path
 import os
 import sys

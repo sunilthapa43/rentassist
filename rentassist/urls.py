@@ -26,6 +26,7 @@ urlpatterns = [
     path('api/payment/', include('payment.urls')),
     path('api/ocr/', include('ocr.urls')),
     path('chat/', include('chat.urls')),
+    path('api/notifications/', include('notification.urls')),
     path('api/users/',include('users.urls')),
     #user registration
     path('auth/register/', include('dj_rest_auth.registration.urls')),

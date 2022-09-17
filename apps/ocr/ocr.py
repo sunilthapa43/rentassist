@@ -65,10 +65,5 @@ def ocr(image):
 
     reading = Decimal(reading[:5] + '.' + reading[5:])
     return reading
-    # meter_reading = new_reading[:5]
-    # meter_reading =  new_reading[-1] + meter_reading
-    # print(int(new_reading))
-    # cv2.imshow('im', im)
-    # cv2.imshow('out', out)
-    # cv2.waitKey(0)
+
     

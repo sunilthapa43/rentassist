@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+from re import A
+from decouple import config
 from pathlib import Path
 import os
 import sys
@@ -57,7 +59,7 @@ THIRD_PARTY_APPS = [
     'allauth.account',
     'dj_rest_auth',
     'dj_rest_auth.registration',
-    
+    'django_celery_results',
     
 ]
 LOCAL_APPS = [
@@ -255,9 +257,6 @@ AUTHENTICATION_BACKENDS = [
 
 ]
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' 
-SITR_ID = 1
-
 CORS_ALLOWED_WHITELIST = [
     "http://127.0.0.1:8000",
     "http://127.0.0.1:3000",
@@ -297,6 +296,16 @@ BATON = {
         None,
 }
 
+
+#backup redis in case of expiry
+REDIS_BACKUP_URI = 'redis://:JNGI3rzll7imo8vcbDLFk7bYe8qkE4mI@redis-11450.c264.ap-south-1-1.ec2.cloud.redislabs.com:11450'
+
+# REDIS CONFIGS
+DATABASE_NUMBER = 11224858
+REDIS_PORT = 18752
+REDIS_KEY = 'BVcojnfKFHsr6N0zOK9keokfoxE0H6jt'
+REDIS_HOSTNAME = 'redis://:' +  REDIS_KEY + '@redis-18752.c81.us-east-1-2.ec2.cloud.redislabs.com:18752'
+
 # Celery Configuration Options
 CELERY_TIMEZONE = "UTC"
 CELERY_TASK_TRACK_STARTED = True
@@ -312,6 +321,13 @@ EMAIL_PORT = 587
 
 EMAIL_HOST_USER = 'rentasisst@gmail.com'
 EMAIL_HOST_PASSWORD = 'eneaxxzuohalrlqo'
+
+
+CELERY_BROKER_URL = REDIS_HOSTNAME
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+
 
 
 import dj_database_url

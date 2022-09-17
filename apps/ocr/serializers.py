@@ -9,3 +9,8 @@ class ElectricityUnitSerializer(serializers.ModelSerializer):
         fields = (
             'image',
         )
+
+class ConfigBatti(serializers.ModelSerializer):
+    class Meta:
+        model = ElectricityUnit
+        fields = ('tenant', 'image', 'current_reading')

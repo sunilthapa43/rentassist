@@ -9,8 +9,8 @@ from rentapp.models import Rent
 @receiver(post_save, sender = ElectricityUnit)
 def post_save_electricity(sender, instance, created, weak=False, *args, **kwargs):
     """ When an electricity(ocr) is updated, the rent amount that is to be paid by the user is calculated by the help of signals"""
-    if instance.current_reading:
-
+    if not instance.current_reading == 0.0:
+        
         a = Agreement.objects.get(tenant=instance.tenant)
         current_units = instance.current_units
         total_payable_amount = a.total_price(electricity_unit=current_units)

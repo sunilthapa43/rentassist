@@ -4,7 +4,7 @@ from rentassist.utils.views import AuthByTokenMixin
 from .models import Complaint, Rent
 from rest_framework import viewsets
 from .serializers import  ComplaintSerializer, RentSerializer
-# Create your views here.
+from rentassist.utils.response import prepare_response
      
 class RentViewSet(AuthByTokenMixin, viewsets.ModelViewSet):
     
@@ -19,8 +19,24 @@ class RentViewSet(AuthByTokenMixin, viewsets.ModelViewSet):
             serializer = RentSerializer(queryset, many=True)
             return Response(serializer.data)
 
-class CompalaintViewSet(viewsets.ModelViewSet):
+class CompalaintViewSet(AuthByTokenMixin, viewsets.ModelViewSet):
     queryset = Complaint.objects.all()
     serializer_class = ComplaintSerializer
+
+    def list(self, request, *args, **kwargs):
+        if not request.user.is_owner:
+            queryset = Complaint.objects.filter(tenant = request.user.tenant)
+            serializer = ComplaintSerializer(queryset, many=True)
+            response = prepare_response(
+                success=True,
+                messgae='your complaints are fetched',
+                data=serializer.data
+            )
+            return Response(response)
+        else:
+            #todo
+            queryset = Complaint.objects.filter()
+            serializer=ComplaintSerializer(queryset, many=True)
+
 
 

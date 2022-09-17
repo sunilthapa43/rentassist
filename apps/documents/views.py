@@ -116,7 +116,7 @@ class AgreementViewSet(AuthByTokenMixin, ModelViewSet):
 
 
 
-class DocumentViewSet(ModelViewSet):
+class DocumentViewSet(AuthByTokenMixin, ModelViewSet):
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
 

@@ -3,8 +3,9 @@
 
 import os
 
-from celery import Celery
+from celery import Celery, shared_task
 from celery.schedules import crontab
+
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'rentassist.settings')
 
@@ -17,8 +18,13 @@ app = Celery('rentassist')
 app.config_from_object('django.conf:settings', namespace='CELERY')
 app.conf.beat_schedule = {
     'execute_daily': {
-            'task': 'tasks.check_deadline',
-            'schedule': crontab(minute=0, hour=0),
+            'task': 'rentapp.tasks.check_deadline',
+            'schedule': crontab(hour=0, minute=0),
+            'args': (16, 16),
+        },
+    'execute_daily_a': {
+            'task': 'rentapp.tasks.agreement_status',
+            'schedule': crontab(hour=0, minute=0),
             'args': (16, 16),
         },
     }
@@ -27,6 +33,5 @@ app.conf.beat_schedule = {
 app.autodiscover_tasks()
 app.conf.timezone = 'UTC'
 
-@app.task(bind=True)
-def debug_task(self):
-    print(f'Request: {self.request!r}')
+
+

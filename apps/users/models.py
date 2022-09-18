@@ -6,6 +6,8 @@ from django.contrib.auth import get_user_model
 class CustomUser(AbstractUser):
     is_owner = models.BooleanField(default=False, verbose_name='Is owner?')
     phone_number = PhoneNumberField(null=False)
+    first_name = models.CharField(max_length=50, null=False, blank=False, verbose_name='First Name')
+    last_name = models.CharField(max_length=50, null=False, blank=False, verbose_name='Last Name')
     image = models.ImageField(verbose_name=('image'), upload_to='static/user-images/', null=False)
 
 

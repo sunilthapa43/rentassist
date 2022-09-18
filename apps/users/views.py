@@ -3,8 +3,9 @@ from rentassist.settings import EMAIL_HOST_USER
 from rentassist.utils.response import exception_response, prepare_response
 from django.core.mail import send_mail
 from rentassist.utils.views import AuthByTokenMixin
-from users.models import EmailVerification, Owner, Tenant
-from .serializers import EmailVerifySerializer, TenantCreationSerializer, TenantSerializer
+from rest_framework.generics import GenericAPIView
+from users.models import CustomUser, EmailVerification, Tenant
+from .serializers import CustomUserDetailsSerializer, EmailVerifySerializer, TenantCreationSerializer, TenantSerializer
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 
@@ -129,3 +130,18 @@ class VerifyToken(AuthByTokenMixin, ModelViewSet):
                     
             except Exception as e:
                 return exception_response(e, serializer)
+
+
+class UserDetailsAPIView(AuthByTokenMixin, GenericAPIView):
+    serializer_class = CustomUserDetailsSerializer
+    queryset = CustomUser.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        queryset = CustomUser.objects.get(pk= request.user.id)
+        serializer = CustomUserDetailsSerializer(queryset,many=False)
+        response = prepare_response(
+            success=True, 
+            message = 'User details fetched successfully',
+            data= serializer.data
+        )
+        return Response(response)

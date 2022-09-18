@@ -18,46 +18,49 @@ class ElectricityUnitView(AuthByTokenMixin, GenericAPIView):
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():
-            user = request.user
-            print(user)
-            image = request.data['image']
-            print(image)
-            obj = ElectricityUnit.objects.update(tenant=user.tenant, image=image)
-            if obj:
-                print('got obj')
-            path_to_image = 'static/meter-reader-images/' + str(image)
-            image_path = os.path.join(BASE_DIR, path_to_image) 
-            extracted_digits = ocr(image_path)
-            print(extracted_digits)
-            obj = ElectricityUnit.objects.get(tenant=user.tenant)
-            if not extracted_digits:  
-                response = {
-                    "success": False,
-                    "message": "Could not run ocr"
-                    }
-                return Response(response)
+            try:
+                user = request.user
                 
-                
-            else:
-                previous_meter_reading = obj.current_reading if obj.current_reading else 0
-                previous_month_units =obj.current_units
-                obj.image = image
-                obj.current_reading = extracted_digits
-                obj.current_units = extracted_digits - previous_meter_reading
-                obj.previous_month_reading = previous_meter_reading
-                obj.previous_month_units = previous_month_units
-                obj.save()
-                payable_units = extracted_digits - previous_meter_reading
-
-                response = {
-                    "success": True,
-                    "message": "Run OCR Successfully",
-                    "data": serializer.data,
-                    "total_payable_unit_this_month": payable_units,
-                    "this_month_meter_reading": extracted_digits,
+                image = request.data['image']
+                print(image)
+                obj = ElectricityUnit.objects.update(tenant=user.tenant, image=image)
+                if obj:
+                    print('got obj')
+                path_to_image = 'static/meter-reader-images/' + str(image)
+                image_path = os.path.join(BASE_DIR, path_to_image) 
+                extracted_digits = ocr(image_path)
+                print(extracted_digits)
+                obj = ElectricityUnit.objects.get(tenant=user.tenant)
+                if not extracted_digits:  
+                    response = {
+                        "success": False,
+                        "message": "Could not run ocr"
+                        }
+                    return Response(response)
                     
-                }
-                return Response(response)
+                    
+                else:
+                    previous_meter_reading = obj.current_reading if obj.current_reading else 0
+                    previous_month_units =obj.current_units
+                    obj.image = image
+                    obj.current_reading = extracted_digits
+                    obj.current_units = extracted_digits - previous_meter_reading
+                    obj.previous_month_reading = previous_meter_reading
+                    obj.previous_month_units = previous_month_units
+                    obj.save()
+                    payable_units = extracted_digits - previous_meter_reading
+    
+                    response = {
+                        "success": True,
+                        "message": "Run OCR Successfully",
+                        "data": serializer.data,
+                        "total_payable_unit_this_month": payable_units,
+                        "this_month_meter_reading": extracted_digits,
+                        
+                    }
+                    return Response(response)
+            except Exception as e:
+                return exception_response(e, serializer)
         else:
             response = {
                 "success": False,
@@ -73,7 +76,7 @@ class ConfigureMeterAPIView(AuthByTokenMixin, GenericAPIView):
     def post(self, request, *args, **kwargs):
         serializer = ConfigBatti(data=request.data)
         user = request.user
-        print(request.user.is_owner)
+        
         if not serializer.is_valid():
             response = {
                 "success": False,

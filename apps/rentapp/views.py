@@ -7,9 +7,10 @@ from .serializers import  ComplaintSerializer, RentSerializer
 from rentassist.utils.response import prepare_response
      
 class RentViewSet(AuthByTokenMixin, viewsets.ModelViewSet):
-    
+    serializer_class = RentSerializer
+    queryset = Rent.objects.all()
     def list(self, request, *args, **kwargs):
-        queryset = Rent.objects.all() 
+        queryset = Rent.objects.filter(tenant__owner = request.user.id) 
         serializer = RentSerializer(queryset, many=True)
         if request.user.is_owner:
             return Response(serializer.data)    
@@ -18,6 +19,8 @@ class RentViewSet(AuthByTokenMixin, viewsets.ModelViewSet):
             queryset = Rent.objects.filter(tenant=request.user.tenant)
             serializer = RentSerializer(queryset, many=True)
             return Response(serializer.data)
+    
+    
 
 class CompalaintViewSet(AuthByTokenMixin, viewsets.ModelViewSet):
     queryset = Complaint.objects.all()
@@ -35,8 +38,15 @@ class CompalaintViewSet(AuthByTokenMixin, viewsets.ModelViewSet):
             return Response(response)
         else:
             #todo
-            queryset = Complaint.objects.filter()
+            print(request.user.id)
+            queryset = Complaint.objects.filter(tenant__owner = request.user.id)
             serializer=ComplaintSerializer(queryset, many=True)
+            response = prepare_response(
+                success=True,
+                message = 'complaints fetched successfully',
+                data= serializer.data
+            )
+            return Response(response)
 
 
 

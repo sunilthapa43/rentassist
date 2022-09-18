@@ -58,7 +58,7 @@ THIRD_PARTY_APPS = [
     'dj_rest_auth',
     'dj_rest_auth.registration',
     'django_celery_results',
-    
+    'drf_yasg'
 ]
 LOCAL_APPS = [
     'users.apps.UsersConfig',
@@ -120,7 +120,7 @@ REST_FRAMEWORK ={
 }
 
 WSGI_APPLICATION = 'rentassist.wsgi.application'
-ASGI_APPLICATION = 'mysite.asgi.application'
+ASGI_APPLICATION = 'rentassist.asgi.application'
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',

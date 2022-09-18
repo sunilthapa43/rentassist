@@ -2,12 +2,13 @@
 from django.core import serializers
 
 from rest_framework.response import Response
+
 from .serializers import MessageSerializer, MessageViewSerializer
 
 from rentassist.utils.views import AuthByTokenMixin
 from .models import Message
 from rest_framework.generics import GenericAPIView
-from rest_framework.parsers import JSONParser
+
 
 class ChatAPIView(AuthByTokenMixin, GenericAPIView):
     serializer_classes = [MessageSerializer, MessageViewSerializer]
@@ -32,8 +33,8 @@ class ChatAPIView(AuthByTokenMixin, GenericAPIView):
                 }
                 return Response(response)
             response ={
-                "success":False,
-                "message":"No messages"
+                "success":True,
+                "message":"Inbox Empty"
             }
             return Response(response)
         response = {
@@ -45,13 +46,17 @@ class ChatAPIView(AuthByTokenMixin, GenericAPIView):
     def post(self, request, *args, **kwargs):
         serializer = MessageSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            response = {
-                "success":True,
-                "data":serializer.data,
-                "message":"Message sent successfully"
-            }
-            return Response(response)
+            sender = request.user
+            receiver = serializer.validated_data['receiver']
+            message = serializer.validated_data['message']
+            obj = Message.objects.create(sender = sender, receiver=receiver, message=message)
+            if obj:
+                response = {
+                    "success":True,
+                    "data":serializer.data,
+                    "message":"Message sent successfully"
+                }
+                return Response(response)
         response = {
             "success":False,
             "message":"Sorry, could not process request"

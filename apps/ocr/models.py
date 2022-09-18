@@ -10,7 +10,8 @@ class ElectricityUnit(models.Model):
     previous_month_units = models.DecimalField(verbose_name=('previous month units'), decimal_places=1, max_digits=6, null = True, blank=True)
 
     def __str__(self):
-        return f'{self.tenant} used {self.current_units} units this month'
+        units = self.current_units or 0
+        return f'{self.tenant} used {units} units this month'
 
     
     

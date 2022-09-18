@@ -9,16 +9,12 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 
 class TenantViewSet(AuthByTokenMixin, ModelViewSet):
+    """ Only Available for owners"""
     serializer_class = TenantSerializer
     queryset = Tenant.objects.all()
 
     def destroy(self, request, pk=None, *args, **kwargs):
-        
-        
-        owner = Owner.objects.get(owner = request.user).id
-        print(type(owner))
-        queryset = Tenant.objects.filter(owner=owner)
-        
+        queryset = Tenant.objects.filter(owner = request.user.id)
         obj = get_object_or_404(queryset, pk=pk)
         if not obj:
             response = prepare_response(
@@ -44,16 +40,14 @@ class TenantViewSet(AuthByTokenMixin, ModelViewSet):
                 message = 'You are not allowed to fetch this API'
             )
             return Response(response)
-        owner = Owner.objects.get(owner = request.user).id
-        queryset =  Tenant.objects.filter(owner=owner)
+        queryset =  Tenant.objects.filter(owner = request.user.id)
         serializer = TenantSerializer(queryset, many=True)
         return Response(serializer.data)
         
 
     def retrieve(self, request, pk=None, *args, **kwargs):
-    
-        owner = Owner.objects.get(owner=request.user).id
-        queryset = Tenant.objects.filter(owner=owner)
+
+        queryset = Tenant.objects.filter(owner = request.user.id)
         print('retreive is hit')
         tenant = get_object_or_404(queryset, pk = pk)
         serializer = TenantSerializer(tenant)

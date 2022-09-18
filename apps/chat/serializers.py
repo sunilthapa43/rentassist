@@ -4,10 +4,10 @@ from .models import Message
 class MessageSerializer(ModelSerializer):
     class Meta:
         model = Message
-        fields = ['sender', 'receiver', 'message']
+        fields = ['receiver', 'message']
 
 
 class MessageViewSerializer(ModelSerializer):
     class Meta:
         model = Message
-        fields = ['sender', 'receiver']
+        fields = ['receiver',]

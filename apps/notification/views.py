@@ -8,7 +8,7 @@ class NotificationAPIView(AuthByTokenMixin, GenericAPIView):
     serializer_class = NotificationSerializer
     queryset = Notification.objects.all()
     def get(self, request, *args, **kwargs):
-        queryset = Notification.objects.filter(is_read=False, target=request.user)
+        queryset = Notification.objects.filter(target=request.user)
         
         for all in queryset:
             all.is_read=True

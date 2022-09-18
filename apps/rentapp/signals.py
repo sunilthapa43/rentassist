@@ -10,28 +10,27 @@ from rentapp.models import Rent
 def post_save_electricity(sender, instance, created, weak=False, *args, **kwargs):
     """ When an electricity(ocr) is updated, the rent amount that is to be paid by the user is calculated by the help of signals"""
     if not instance.current_reading == 0.0:
-        
+        print('signals')
         a = Agreement.objects.get(tenant=instance.tenant)
-        current_units = instance.current_units
+        current_units = instance.current_units or 0
         total_payable_amount = a.total_price(electricity_unit=current_units)
         try:
-           b = Rent.objects.get(tenant = instance.tenant)
-    
-           if b:
-            print('found b')
-            b.this_month_rent = total_payable_amount
-            b.amount_to_be_paid = b.total_amount()
-            b.save()
-    
-           else:
-            a = Rent.objects.create(tenant=instance.tenant,
+            b = Rent.objects.filter(tenant = instance.tenant).first()
+            if not b:
+                a = Rent.objects.create(tenant=instance.tenant,
                                     this_month_rent = total_payable_amount,
                                     amount_to_be_paid = total_payable_amount,
                                     amount_paid_this_month = 0,
                                     due_amount = 0,
                                     status = 'U',
                                     )
-            a.save()
+            else:
+                
+                print('found b')
+                b.this_month_rent = total_payable_amount
+                b.amount_to_be_paid = b.total_amount()
+                b.save()
+            
 
         except Exception as e:
             print(e)

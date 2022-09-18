@@ -29,6 +29,9 @@ SECRET_KEY = "django-insecure-+!^!28=^tmijtwus**pmtt$3c(0dmmtkt$3$@m($zr5b6xn=_=
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    'rent-assist-2021.herokuapp.com',
     '*',
 ]
 
@@ -83,6 +86,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
+    'rentassist.middleware.DisableCSRFMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',

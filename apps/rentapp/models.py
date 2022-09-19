@@ -112,3 +112,16 @@ class Rent(models.Model):
 
 
 
+class Room(models.Model):
+    name = models.CharField(max_length=50, blank=True, default = 'great room', verbose_name='Room')
+    owner = models.ForeignKey('users.Owner', on_delete=models.CASCADE, related_name='room_owner', verbose_name='owner user')
+    price = models.IntegerField(verbose_name='rent amount', null=False, blank=False)
+    internet_price = models.IntegerField(verbose_name = 'Internet Price', default=0)
+    water_usage_price = models.IntegerField( null=False, verbose_name = 'water_usage_price')
+    nagarpalika_fohr_price = models.IntegerField( null=False, blank=False, verbose_name = 'Nagarpalika Fohr Price',)
+    electricity_rate = models.IntegerField( verbose_name='electricity charge per unit')
+    created =  models.DateField(auto_now= True)
+    updated = models.DateField(auto_now_add=True)
+
+    def __str__(self) -> str:
+        return f'{self.id}'

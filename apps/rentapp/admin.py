@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import  Complaint, Rent
-# from .models import Room
+from .models import Room
 
 
 @admin.register(Rent)
@@ -44,25 +44,25 @@ class ComplaintAdmin(admin.ModelAdmin):
         'urgency_level' 
     )
 
-# @admin.register(Room)
-# class RoomAdmin(admin.ModelAdmin):
-#     list_display = (
-#         'owner',
-#         'price',
-#         'internet_price',
-#         'water_usage_price',
-#         'nagarpalika_fohr_price',
-#         'electricity_rate',
+@admin.register(Room)
+class RoomAdmin(admin.ModelAdmin):
+    list_display = (
+        'owner',
+        'price',
+        'internet_price',
+        'water_usage_price',
+        'nagarpalika_fohr_price',
+        'electricity_rate',
           
-#     )
-#     fields = (
-#         'owner',
-#         'price',
-#         'internet_price',
-#         'water_usage_price',
-#         'nagarpalika_fohr_price',
-#         'electricity_rate',
+    )
+    fields = (
+        'owner',
+        'price',
+        'internet_price',
+        'water_usage_price',
+        'nagarpalika_fohr_price',
+        'electricity_rate',
         
         
-    # )
-    # readonly_fields = ['created','updated']
+    )
+    readonly_fields = ['created','updated']

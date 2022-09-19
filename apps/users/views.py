@@ -5,7 +5,7 @@ from django.core.mail import send_mail
 from rentassist.utils.views import AuthByNoneMixin, AuthByTokenMixin
 from rest_framework.generics import GenericAPIView
 from users.models import CustomUser, EmailVerification, Owner, Tenant
-from .serializers import CustomUserDetailsSerializer, CustomuserSerializer, EmailVerifySerializer, TenantCreationSerializer, TenantSerializer
+from .serializers import CustomUserDetailsSerializer, CustomuserSerializer, EmailVerifySerializer, OwnerDetailSerializer, TenantCreationSerializer, TenantSerializer
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 
@@ -153,6 +153,47 @@ class UserDetailsAPIView(AuthByTokenMixin, GenericAPIView):
         return Response(response)
 
 
-class UsersViewSet(AuthByNoneMixin, ModelViewSet):
+class AllUsersViewSet(AuthByNoneMixin, ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = CustomuserSerializer
+
+
+class MyOwnerDetailsView(AuthByTokenMixin, GenericAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = OwnerDetailSerializer
+
+
+    def get(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid() and request.user.is_owner:
+            response = prepare_response(
+                success=False,
+                message='owner cant fetch this api'
+            )
+            return Response(response)
+        id = CustomUser.objects.get(pk= request.user.id)
+        queryset =  Tenant.objects.get(tenant= id)
+        owner = queryset.owner.owner
+        owner_firstname = owner.first_name
+        owner_lastname = owner.last_name
+        owner_isactive = owner.is_active
+        owner_username = owner.username
+        if queryset:
+            response = {
+                "success": True,
+                "message": "Owner details fetched successfully",
+                "details": {
+                    "first_name": owner_firstname,
+                    "last_name": owner_lastname,
+                    "email": owner_username,
+                    "is_active": owner_isactive
+                }
+            }
+            return Response(response)
+         
+        else:
+            response = {
+                "success": False,
+                "message": "Not registered as a Tenant"
+            }
+            return Response(response)

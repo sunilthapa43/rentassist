@@ -87,3 +87,10 @@ class CustomuserSerializer(serializers.ModelSerializer):
     class Meta:
         model=CustomUser
         fields ='__all__'
+
+
+
+class OwnerDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model =Tenant
+        exclude = ('tenant', 'owner')

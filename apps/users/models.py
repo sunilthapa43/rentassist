@@ -36,3 +36,7 @@ class EmailVerification(models.Model):
     created = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='User', related_name='verify')
     token = models.CharField(max_length=6, verbose_name='verification code',null=False)
+
+
+
+# Cannot resolve keyword 'user' into field. Choices are: auth_token, date_joined, document, email, emailaddress, first_name, groups, id, image, is_active, is_owner, is_staff, is_superuser, last_login, last_name, logentry, msg_receiver, msg_sender, notification, owner_user, password, phone_number, socialaccount, tenant, user_permissions, username, verify

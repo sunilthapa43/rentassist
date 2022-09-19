@@ -7,6 +7,11 @@ STATUS_CHOICES = [
         ('CANCELLED' , 'CANCELLED'),
         ('SUCCESS' , 'SUCCESS'),
 ]
+
+MEDIUM_CHOICES = [
+    ('O', 'Online Payment'),
+    ('C', 'Cash Payment')
+]
 class Transaction(models.Model): #KHALTI
     initiator= models.ForeignKey('users.Tenant', on_delete=models.CASCADE, related_name='payment')
     payment_token = models.CharField(max_length=50,blank=False,null=False)
@@ -29,6 +34,18 @@ class OtherPayment(models.Model):
         return f' {self.initiator} has paid Rs. {self.amount}'
     class Meta:
         ordering = ['date']
+
+
+
+class AllTransaction(models.Model):
+    initiator = models.ForeignKey('users.Tenant', verbose_name='Initiator', related_name='all_transactions',on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=8, decimal_places=2, blank=False)
+    medium = models.CharField(max_length=32, blank=False, choices=MEDIUM_CHOICES)
+    paid_at = models.DateTimeField(auto_now=True)
+ 
+
+    def __str__(self):
+        return f'{self.initiator} pays Rs. {self.amount} via {self.medium}'
 
 
 

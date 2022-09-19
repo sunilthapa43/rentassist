@@ -113,7 +113,6 @@ class Rent(models.Model):
 
 
 class Room(models.Model):
-    name = models.CharField(max_length=50, blank=True, default = 'great room', verbose_name='Room')
     owner = models.ForeignKey('users.Owner', on_delete=models.CASCADE, related_name='room_owner', verbose_name='owner user')
     price = models.IntegerField(verbose_name='rent amount', null=False, blank=False)
     internet_price = models.IntegerField(verbose_name = 'Internet Price', default=0)

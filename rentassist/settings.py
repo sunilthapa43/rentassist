@@ -61,7 +61,7 @@ THIRD_PARTY_APPS = [
     'dj_rest_auth',
     'dj_rest_auth.registration',
     'django_celery_results',
-    'drf_yasg'
+    'fcm_django'
 ]
 LOCAL_APPS = [
     'users.apps.UsersConfig',

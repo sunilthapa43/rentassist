@@ -14,6 +14,8 @@ from pathlib import Path
 import os
 import sys
 import django_heroku
+from decouple import config
+from firebase_admin import credentials, initialize_app
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -329,6 +331,34 @@ CELERY_BROKER_URL = REDIS_HOSTNAME
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
+
+
+
+#  Firebase setup
+FIREBASE_CREDENTIALS_FILE = 'rent-assist-ce78b-firebase-adminsdk-pgodm-04a9fadbc0.json'
+FIREBASE_CRENDETIALS_PATH = os.path.join(
+    BASE_DIR,
+    'rentassist\\credentials\\rent-assist-ce78b-firebase-adminsdk-pgodm-04a9fadbc0.json',)
+    # config('FIREBASE_CRENDETIALS_PATH', cast=str),
+
+FIREBASE_CERTIFICATE = credentials.Certificate(FIREBASE_CRENDETIALS_PATH)
+FIREBASE_APP = initialize_app(FIREBASE_CERTIFICATE)
+
+FCM_DJANGO_SETTINGS = {
+     # default: _('FCM Django')
+    "APP_VERBOSE_NAME": "RentAssist",
+     # true if you want to have only one active device per registered user at a time
+     # default: False
+    "ONE_DEVICE_PER_USER": True,
+     # devices to which notifications cannot be sent,
+     # are deleted upon receiving error response from FCM
+     # default: False
+    "DELETE_INACTIVE_DEVICES": True,
+    # Transform create of an existing Device (based on registration id) into
+                # an update. See the section
+    # "Update of device with duplicate registration ID" for more details.
+    "UPDATE_ON_DUPLICATE_REG_ID": True,
+}
 
 
 

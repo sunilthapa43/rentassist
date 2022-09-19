@@ -1,7 +1,6 @@
 from django.dispatch import receiver
 from django.db.models.signals import pre_save, post_save
 from documents.models import Agreement
-from payment.models import OtherPayment, Transaction
 from rentapp.models import Complaint
 from .models import Notification
 # from documents.signals import agreement_deadline_approach, agreement_deadline_skipped

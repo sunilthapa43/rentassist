@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import OtherPayment, Transaction
+from .models import AllTransaction, OtherPayment, Transaction
 
 # Register your models here.
 @admin.register(Transaction)
@@ -33,4 +33,18 @@ class OtherPaymentAdmin(admin.ModelAdmin):
         'initiator',
         'amount',
         'remarks',
+    )
+
+@admin.register(AllTransaction)
+class AllTransactionAdmin(admin.ModelAdmin):
+    list_display = (
+        'initiator',
+        'amount',
+        'medium',
+
+    )
+    fields = ( 
+        'initiator',
+        'amount',
+        'medium',
     )

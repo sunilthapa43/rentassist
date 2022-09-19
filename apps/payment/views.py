@@ -1,8 +1,9 @@
+from yaml import serialize
 from payment.khalti import Khalti
 from users.models import Tenant
 from rentassist.settings import BASE_DIR
 from rentassist.utils.views import AuthByTokenMixin
-from .serializers import KhaltiVerifySerializer, OtherPaymentSerializer
+from .serializers import AllTransactionSerializer, KhaltiVerifySerializer, OtherPaymentSerializer
 from rentassist.utils.response import exception_response, prepare_response
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
@@ -134,3 +135,17 @@ class OtherPaymentAPIView(AuthByTokenMixin, GenericAPIView):
                 return Response(response, status=200)
             except Exception as e:
                 return exception_response(e, serializer)
+
+    
+class AllTransactionsAPIView(AuthByTokenMixin, GenericAPIView):
+    serializer_class = AllTransactionSerializer
+    def get(self, request, *args, **kwargs):
+        if request.user.is_owner:
+            queryset = Transaction.objects.filter(initiator__tenant__owner__owner = request.user)
+            serializer = AllTransactionSerializer(queryset, many=True)
+            response = prepare_response(
+                success=True,
+                messge='fetched successfully',
+                data=serializer.data
+            )
+            return Response(response)

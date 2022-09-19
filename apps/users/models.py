@@ -3,6 +3,8 @@ from django.contrib.auth.models import AbstractUser
 from  phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth import get_user_model
 
+
+
 class CustomUser(AbstractUser):
     is_owner = models.BooleanField(default=False, verbose_name='Is owner?')
     phone_number = PhoneNumberField(null=False)
@@ -23,7 +25,8 @@ class Owner(models.Model):
 
 class Tenant(models.Model): 
     tenant = models.OneToOneField(User, verbose_name='tenant name', on_delete=models.CASCADE, related_name='tenant')
-    owner = models.ForeignKey(Owner, verbose_name='owner', on_delete=models.CASCADE, related_name='owner_of_this_tenant',)
+    owner = models.ForeignKey(Owner, verbose_name='owner', on_delete=models.CASCADE, related_name='owner_of_this_tenant')
+    # room = models.OneToOneField('rentapp.Room',verbose_name='room', default=1, on_delete=models.CASCADE, related_name='room' )
     def __str__(self):
         return self.tenant.username
 

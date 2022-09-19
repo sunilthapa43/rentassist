@@ -26,14 +26,13 @@ class UserAdmin(admin.ModelAdmin):
 @admin.register(Tenant)
 class TenantAdmin(admin.ModelAdmin):
     list_display = (
-
         'tenant',
         'owner',
         )
     fields = (
-
         'tenant',
         'owner',
         )
 
 admin.site.register(Owner)
+

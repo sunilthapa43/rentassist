@@ -1,6 +1,7 @@
 
 from rest_framework import serializers
 from dj_rest_auth.registration.serializers import RegisterSerializer
+
 from .models import CustomUser, EmailVerification, Tenant
 from allauth.account.adapter import get_adapter
 
@@ -41,16 +42,12 @@ class CustomRegisterSerializer(RegisterSerializer):
         self.cleaned_data = self.get_cleaned_data()
         user.phone_number = self.cleaned_data.get('phone_number')
         user.is_owner = self.cleaned_data.get('is_owner')
-        user.first_name = self.cleaned_data('first_name')
-        user.last_name = self.cleaned_data('last_name')
+        user.first_name = self.cleaned_data.get('first_name')
+        user.last_name = self.cleaned_data.get('last_name')
         user.image = self.cleaned_data.get('image')
         user.save()
         adapter.save_user(request, user, self)
         return user
-
-
-
-
 
 
 class CustomUserDetailsSerializer(serializers.ModelSerializer):

@@ -171,13 +171,17 @@ class MyOwnerDetailsView(AuthByTokenMixin, GenericAPIView):
                 message='owner cant fetch this api'
             )
             return Response(response)
-        id = CustomUser.objects.get(pk= request.user.id)
-        queryset =  Tenant.objects.get(tenant= id)
-        owner = queryset.owner.owner
+        
+        id = CustomUser.objects.get(pk= request.user.id) 
+        queryset =  Tenant.objects.filter(tenant= id)
+        if queryset.exists():
+            res = Tenant.objects.get(tenant=id)
+        owner = res.owner.owner
         owner_firstname = owner.first_name
         owner_lastname = owner.last_name
         owner_isactive = owner.is_active
         owner_username = owner.username
+        owner_phone_number = str(owner.phone_number)
         if queryset:
             response = {
                 "success": True,
@@ -186,7 +190,8 @@ class MyOwnerDetailsView(AuthByTokenMixin, GenericAPIView):
                     "first_name": owner_firstname,
                     "last_name": owner_lastname,
                     "email": owner_username,
-                    "is_active": owner_isactive
+                    "is_active": owner_isactive,
+                    "owner_phone_number": owner_phone_number
                 }
             }
             return Response(response)

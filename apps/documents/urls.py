@@ -3,6 +3,6 @@ from .views import AgreementViewSet
 router = DefaultRouter()
 
 
-router.register('agreements', AgreementViewSet, basename= 'agreement')
+router.register('agreement', AgreementViewSet, basename= 'agreement')
 
 urlpatterns = router.urls

@@ -2,8 +2,6 @@ from datetime import datetime, timedelta
 from django.db import models
 from notification.models import Notification
 
-from users.models import Tenant
-
 URGENCY_CHOICES =[
     ('H','High'),
     ('I', 'Intermediate'),
@@ -26,8 +24,10 @@ PAYMENT_TYPE = [
     ('E', 'Online Payment')
 ]
 
+
+    
 class Complaint(models.Model):
-    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE,related_name='complaint')
+    tenant = models.ForeignKey('users.Tenant', on_delete=models.CASCADE,related_name='complaint')
     image = models.ImageField(upload_to='static/complains', blank=True, null=True)
     title = models.CharField(max_length=20)
     description =  models.TextField()
@@ -44,7 +44,7 @@ class Rent(models.Model):
         PARTIALLY_PAID = 'P', ('Partially Paid')
         UNPAID = 'U', ('Unpaid')
     
-    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, verbose_name='who pays the rent', related_name='rent_payer')
+    tenant = models.ForeignKey('users.Tenant', on_delete=models.CASCADE, verbose_name='who pays the rent', related_name='rent_payer')
     this_month_rent = models.DecimalField(max_digits=8, decimal_places=2)
     amount_to_be_paid = models.DecimalField(max_digits=8, decimal_places=2) #this_month_rent + due_amount
     amount_paid_this_month = models.DecimalField(max_digits=8, decimal_places=2)
@@ -109,5 +109,19 @@ class Rent(models.Model):
             target = target
         )
         obj.save()
-# have owner add rooms or flats, its image when tenant comes and takes one the owner assigns a room while adding the tenant,
-#  this way it is easier if same tenant buys 2 different rooms or apartments
+
+
+
+class Room(models.Model):
+    name = models.CharField(max_length=50, blank=True, default = 'great room', verbose_name='Room')
+    owner = models.ForeignKey('users.Owner', on_delete=models.CASCADE, related_name='room_owner', verbose_name='owner user')
+    price = models.IntegerField(verbose_name='rent amount', null=False, blank=False)
+    internet_price = models.IntegerField(verbose_name = 'Internet Price', default=0)
+    water_usage_price = models.IntegerField( null=False, verbose_name = 'water_usage_price')
+    nagarpalika_fohr_price = models.IntegerField( null=False, blank=False, verbose_name = 'Nagarpalika Fohr Price',)
+    electricity_rate = models.IntegerField( verbose_name='electricity charge per unit')
+    created =  models.DateField(auto_now= True)
+    updated = models.DateField(auto_now_add=True)
+
+    def __str__(self) -> str:
+        return f'{self.id}'

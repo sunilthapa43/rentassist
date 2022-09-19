@@ -1,6 +1,7 @@
 
 from rest_framework.response import Response
 from payment.models import Transaction
+from rentassist.utils.response import exception_response, prepare_response
 
 from rentassist.utils.views import AuthByTokenMixin
 from .models import Document, Agreement
@@ -14,7 +15,7 @@ class AgreementViewSet(AuthByTokenMixin, ModelViewSet):
     def list(self, request, *args, **kwargs):
         user = request.user
         if user.is_owner:
-            queryset = Agreement.objects.all()
+            queryset = Agreement.objects.filter(tenant__owner = user.id)
             serializer = AgreementSerializer(queryset, many=True)
             response = {
                 "success":True,
@@ -23,42 +24,30 @@ class AgreementViewSet(AuthByTokenMixin, ModelViewSet):
             }
             return Response(response)
         
-        
-        try:
-            tenant = request.user
-            username = tenant.username
-            agreement = Agreement.objects.get(tenant = tenant)
-            if agreement:
-                rent_price = agreement.price
-                water_usage_price = agreement.water_usage_price
-                electricity_rate = agreement.electricity_rate
-                internet_price = agreement.internet_price
-                created = agreement.created
-                updated = agreement.updated
-                deadline = agreement.deadline
-
+        elif not user.is_owner:
+            try:
+                print(type(request.user), request.user.username)
+                # _queryset = Agreement.objects.get(tenant__tenant = request.user.id)
+                queryset = Agreement.objects.get(tenant__tenant = request.user.id)
+                owner = queryset.tenant.owner
+                print(owner)
+                serializer = AgreementSerializer(queryset, many=False)
                 response = {
-                    "success": True,
-                    "message": "Your Agreement details fetched successfully",
-                    "name": username,
-                    "created": created,
-                    "rent_price":rent_price,
-                    "water_usage_price":water_usage_price,
-                    "electricity_rate":electricity_rate,
-                    "internet_price":internet_price,
-                    "updated": updated,
-                    "deadline": deadline,  
+                    "success":True,
+                    "message":f"Successfully fetched your agreement with the owner: MR. {owner}",
+                    "data": serializer.data
                 }
                 return Response(response)
-            
-            response = {
-                "success":False,
-                "message":"Could not process the request"
-                }
-            return Response(response)
+            except Exception as e:
+                return exception_response(e, serializer.errors)
+    
+        response = {
+            "success":False,
+            "message":"Could not process the request"
+            }
+        return Response(response)
         
-        except Exception as e:
-            return Response(e, serializer.errors)
+
 
 
     def create(self, request, *args, **kwargs):
@@ -70,48 +59,46 @@ class AgreementViewSet(AuthByTokenMixin, ModelViewSet):
             }
             return Response(response)
         
-        try:
-            tenant = serializer.validated_data['tenant']
-            price =  serializer.validated_data['price']
-            internet_price =  serializer.validated_data['internet_price']
-            water_usage_price =  serializer.validated_data['water_usage_price']
-            electricity_rate =  serializer.validated_data['electricity_rate']
-            created = serializer.validated_data['created']
-            updated = serializer.validated_data['updated']
-            deadline = serializer.validated_data['deadline']
-            
-            obj = Agreement.objects.get(tenant=tenant)
-
-            if not obj:
-                instance = Agreement.objects.create(tenant=tenant, 
-                           created=created,
-                           updated=updated,
-                           deadline=deadline, 
-                           price=price, 
-                           water_usage_price=water_usage_price, 
-                           electricity_rate=electricity_rate, 
-                           internet_price=internet_price )
-                instance.save()
-                response = {
-                    "success": True,
-                    "message": "Successfully formed contract",
-                    "data": serializer.data
-                }
-                return Response(response)
-            
-            obj.updated = updated
-            obj.save()
-
+    
+        tenant = serializer.validated_data['tenant']
+        price =  serializer.validated_data['price']
+        internet_price =  serializer.validated_data['internet_price']
+        water_usage_price =  serializer.validated_data['water_usage_price']
+        electricity_rate =  serializer.validated_data['electricity_rate']
+        nagarpalika_fohr_price =  serializer.validated_data['nagarpalika_fohr_price']
+        obj = Agreement.objects.filter(tenant=tenant)
+        if not obj.exists():
+            instance = Agreement.objects.create(
+                       tenant=tenant, 
+                       price=price, 
+                       water_usage_price=water_usage_price, 
+                       electricity_rate=electricity_rate, 
+                       nagarpalika_fohr_price=nagarpalika_fohr_price,
+                       internet_price=internet_price )
             response = {
-                "success":True,
-                "message":"successfully updated the contract agreement",
-                "updated": updated,
-                "new deadline": deadline
+                "success": True,
+                "message": "Successfully formed contract",
+                "data": serializer.data
             }
             return Response(response)
+        else:
 
-        except Exception as e:
-            return Response(e, serializer.errors)
+            obj = Agreement.objects.get(tenant=tenant)
+            print(obj.price)
+            obj.price=price 
+            obj.water_usage_price=water_usage_price 
+            obj.electricity_rate=electricity_rate 
+            obj.nagarpalika_fohr_price=nagarpalika_fohr_price
+            obj.internet_price=internet_price 
+            obj.save()
+            response = prepare_response(
+                success =True,
+                message='successfully updated agreement',
+                data=serializer.data
+            )
+            return Response(response)
+
+        
 
 
 

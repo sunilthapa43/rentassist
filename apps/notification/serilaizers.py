@@ -5,4 +5,4 @@ from .models import Notification
 class NotificationSerializer(ModelSerializer):
     class Meta:
         model = Notification
-        exclude = ('target', 'created', 'is_read')
+        exclude = ('target', 'is_read')

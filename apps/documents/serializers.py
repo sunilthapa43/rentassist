@@ -11,4 +11,11 @@ class DocumentSerializer(ModelSerializer):
 class AgreementSerializer(ModelSerializer):
     class Meta:
         model = Agreement
-        fields = '__all__'
+        fields = (
+            'price',
+            'tenant',
+            'internet_price',
+            'water_usage_price',
+            'nagarpalika_fohr_price',
+            'electricity_rate',
+        )

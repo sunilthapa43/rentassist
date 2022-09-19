@@ -2,10 +2,10 @@ from django.shortcuts import get_object_or_404
 from rentassist.settings import EMAIL_HOST_USER
 from rentassist.utils.response import exception_response, prepare_response
 from django.core.mail import send_mail
-from rentassist.utils.views import AuthByTokenMixin
+from rentassist.utils.views import AuthByNoneMixin, AuthByTokenMixin
 from rest_framework.generics import GenericAPIView
-from users.models import CustomUser, EmailVerification, Tenant
-from .serializers import CustomUserDetailsSerializer, EmailVerifySerializer, TenantCreationSerializer, TenantSerializer
+from users.models import CustomUser, EmailVerification, Owner, Tenant
+from .serializers import CustomUserDetailsSerializer, CustomuserSerializer, EmailVerifySerializer, TenantCreationSerializer, TenantSerializer
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 
@@ -54,39 +54,45 @@ class TenantViewSet(AuthByTokenMixin, ModelViewSet):
         serializer = TenantSerializer(tenant)
         return Response(serializer.data)
 
-    def create(self, request, *args, **kwargs):
+
+class TenantCreationAPIView(AuthByTokenMixin, GenericAPIView):
+    serializer_class = TenantCreationSerializer
+    def post(self, request, *args, **kwargs):
+
         serializer = TenantCreationSerializer(data=request.data)
+        print('this api hit')
         if not serializer.is_valid():
-            response=prepare_response(
-                success=False,
-                message='Invalid Request'
-            )
-            return Response(response)
+           response=prepare_response(
+               success=False,
+               message='Invalid Request'
+           )
+           return Response(response)
         try:
+
             tenant = serializer.validated_data['tenant']
-            owner = serializer.validated_data['owner']
-            print(request.user.id)
-            obj = Tenant.objects.get_or_create(tenant=tenant, owner=owner)
-            if obj:
+            owner = request.user
+            id = Owner.objects.get(owner = owner)
+            print(id)
+            obj = Tenant.objects.filter(tenant=tenant, owner=owner.id).first()
+            if not obj:
+                Tenant.objects.create(tenant=tenant, owner=id)
                 response = prepare_response(
-                    success=True,
-                    message='created successfully',
-                    data=serializer.data
+                   success=True,
+                   message='created successfully',
+                   data=serializer.data
                 )
                 return Response(response)
             else:
                 response = prepare_response(
-                    success=False,
-                    message='Could not create user',
-                    data=serializer.data
+                   success=False,
+                   message='Already exists tenant to this owner',
+                   data=serializer.data
                 )
                 return Response(response)
-                
+               
         except Exception as e:
-            return exception_response(e, serializer)        
+           return exception_response(e, serializer) 
 
-
-    
 
 class VerifyToken(AuthByTokenMixin, ModelViewSet):
     serializer_class = EmailVerifySerializer
@@ -145,3 +151,8 @@ class UserDetailsAPIView(AuthByTokenMixin, GenericAPIView):
             data= serializer.data
         )
         return Response(response)
+
+
+class UsersViewSet(AuthByNoneMixin, ModelViewSet):
+    queryset = CustomUser.objects.all()
+    serializer_class = CustomuserSerializer

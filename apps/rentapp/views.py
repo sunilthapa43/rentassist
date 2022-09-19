@@ -1,9 +1,9 @@
 from rest_framework.response import Response
 
 from rentassist.utils.views import AuthByTokenMixin
-from .models import Complaint, Rent
+from .models import Complaint, Rent, Room
 from rest_framework import viewsets
-from .serializers import  ComplaintSerializer, RentSerializer
+from .serializers import  ComplaintSerializer, RentSerializer, RoomSerializer
 from rentassist.utils.response import prepare_response
      
 class RentViewSet(AuthByTokenMixin, viewsets.ModelViewSet):
@@ -50,3 +50,6 @@ class CompalaintViewSet(AuthByTokenMixin, viewsets.ModelViewSet):
 
 
 
+class RoomViewSet(AuthByTokenMixin, viewsets.ModelViewSet):
+    queryset = Room.objects.all()
+    serializer_class = RoomSerializer

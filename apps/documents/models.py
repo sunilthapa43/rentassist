@@ -20,7 +20,7 @@ class Agreement(models.Model):
     electricity_rate = models.IntegerField( verbose_name='electricity charge per unit')
     created =  models.DateField(auto_now= True)
     updated = models.DateField(auto_now_add=True)# auto now add
-    deadline =  models.DateField(default=datetime.now().date()+timedelta(days=30))
+    deadline =  models.DateField(default=datetime.now().date()+timedelta(days=90))
 
     def __str__(self) -> str:
         return f'Agreement on rent between {self.tenant} and {self.tenant.owner.owner.username}'

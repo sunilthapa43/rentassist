@@ -1,5 +1,5 @@
 from payment.khalti import Khalti
-from rentapp.models import Tenant
+from users.models import Tenant
 from rentassist.settings import BASE_DIR
 from rentassist.utils.views import AuthByTokenMixin
 from .serializers import KhaltiVerifySerializer, OtherPaymentSerializer

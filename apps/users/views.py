@@ -176,26 +176,26 @@ class MyOwnerDetailsView(AuthByTokenMixin, GenericAPIView):
         queryset =  Tenant.objects.filter(tenant= id)
         if queryset.exists():
             res = Tenant.objects.get(tenant=id)
-        owner = res.owner.owner
-        owner_firstname = owner.first_name
-        owner_lastname = owner.last_name
-        owner_isactive = owner.is_active
-        owner_username = owner.username
-        owner_phone_number = str(owner.phone_number)
-        if queryset:
-            response = {
-                "success": True,
-                "message": "Owner details fetched successfully",
-                "details": {
-                    "first_name": owner_firstname,
-                    "last_name": owner_lastname,
-                    "email": owner_username,
-                    "is_active": owner_isactive,
-                    "owner_phone_number": owner_phone_number
+            owner = res.owner.owner
+            owner_firstname = owner.first_name
+            owner_lastname = owner.last_name
+            owner_isactive = owner.is_active
+            owner_username = owner.username
+            owner_phone_number = str(owner.phone_number)
+            if queryset:
+                response = {
+                    "success": True,
+                    "message": "Owner details fetched successfully",
+                    "details": {
+                        "first_name": owner_firstname,
+                        "last_name": owner_lastname,
+                        "email": owner_username,
+                        "is_active": owner_isactive,
+                        "owner_phone_number": owner_phone_number
+                    }
                 }
-            }
-            return Response(response)
-         
+                return Response(response)
+             
         else:
             response = {
                 "success": False,

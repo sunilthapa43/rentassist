@@ -12,7 +12,14 @@ class RentSerializer(serializers.ModelSerializer):
 class ComplaintSerializer(serializers.ModelSerializer):
     class Meta:
         model = Complaint
-        fields = "__all__"
+        exclude =('tenant',)
+    
+
+class ComplaintSerializerAdmin(serializers.ModelSerializer):
+    class Meta:
+        model = Complaint
+        fields = '__all__'
+
 
 
 class RoomSerializer(serializers.ModelSerializer):

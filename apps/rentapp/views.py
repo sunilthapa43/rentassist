@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rentassist.utils.views import AuthByTokenMixin
 from .models import Complaint, Rent, Room
 from rest_framework import viewsets
-from .serializers import  ComplaintSerializer, RentSerializer, RoomSerializer
+from .serializers import  ComplaintSerializer, ComplaintSerializerAdmin, RentSerializer, RoomSerializer
 from rentassist.utils.response import prepare_response
      
 class RentViewSet(AuthByTokenMixin, viewsets.ModelViewSet):
@@ -37,10 +37,8 @@ class CompalaintViewSet(AuthByTokenMixin, viewsets.ModelViewSet):
             )
             return Response(response)
         else:
-            #todo
-            print(request.user.id)
-            queryset = Complaint.objects.filter(tenant__owner = request.user.id)
-            serializer=ComplaintSerializer(queryset, many=True)
+            queryset = Complaint.objects.filter(tenant__owner__owner = request.user.id)
+            serializer=ComplaintSerializerAdmin(queryset, many=True)
             response = prepare_response(
                 success=True,
                 message = 'complaints fetched successfully',

@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from pyexpat import model
 from django.db import models
 from notification.models import Notification
 
@@ -24,7 +25,6 @@ PAYMENT_TYPE = [
     ('E', 'Online Payment')
 ]
 
-
     
 class Complaint(models.Model):
     tenant = models.ForeignKey('users.Tenant', on_delete=models.CASCADE,related_name='complaint')
@@ -32,10 +32,12 @@ class Complaint(models.Model):
     title = models.CharField(max_length=20)
     description =  models.TextField()
     date =  models.DateTimeField(auto_now_add=True)
+    status = models.CharField(verbose_name='Complaint Status', default='Pending', max_length=200)
+    is_solved = models.BooleanField(default=False, verbose_name='Solved')
     urgency_level = models.CharField(choices=URGENCY_CHOICES,max_length =255)
 
     def __str__(self) -> str:
-        return f'{self.tenant} complains on {self.title}'
+        return f'{self.tenant} complains on {self.title} '
         
 
 class Rent(models.Model):

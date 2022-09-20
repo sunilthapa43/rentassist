@@ -338,8 +338,8 @@ CELERY_TASK_SERIALIZER = 'json'
 FIREBASE_CREDENTIALS_FILE = 'rent-assist-ce78b-firebase-adminsdk-pgodm-04a9fadbc0.json'
 FIREBASE_CRENDETIALS_PATH = os.path.join(
     BASE_DIR,
-    # 'rentassist/credentials/rent-assist-ce78b-firebase-adminsdk-pgodm-04a9fadbc0.json',) #for firebase
-     'rentassist\\credentials\\rent-assist-ce78b-firebase-adminsdk-pgodm-04a9fadbc0.json',) # for local
+    'rentassist/credentials/rent-assist-ce78b-firebase-adminsdk-pgodm-04a9fadbc0.json',) #for firebase
+    # 'rentassist\\credentials\\rent-assist-ce78b-firebase-adminsdk-pgodm-04a9fadbc0.json',) # for local
     # config('FIREBASE_CRENDETIALS_PATH', cast=str),
 
 FIREBASE_CERTIFICATE = credentials.Certificate(FIREBASE_CRENDETIALS_PATH)

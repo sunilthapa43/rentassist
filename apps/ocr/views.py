@@ -20,17 +20,17 @@ class ElectricityUnitView(AuthByTokenMixin, GenericAPIView):
         if serializer.is_valid():
             try:
                 user = request.user
-                
+                tenant = serializer.validated_data['tenant']
                 image = request.data['image']
                 print(image)
-                obj = ElectricityUnit.objects.update(tenant=user.tenant, image=image)
+                obj = ElectricityUnit.objects.update(tenant=tenant, image=image)
                 if obj:
                     print('got obj')
                 path_to_image = 'static/meter-reader-images/' + str(image)
                 image_path = os.path.join(BASE_DIR, path_to_image) 
                 extracted_digits = ocr(image_path)
                 print(extracted_digits)
-                obj = ElectricityUnit.objects.get(tenant=user.tenant)
+                obj = ElectricityUnit.objects.get(tenant=tenant)
                 if not extracted_digits:  
                     response = {
                         "success": False,
@@ -106,6 +106,7 @@ class ConfigureMeterAPIView(AuthByTokenMixin, GenericAPIView):
                 previous_month_reading = 0,
                 previous_month_units = 0
             )
+            obj.save()
     
             response = {
                 "success":True,

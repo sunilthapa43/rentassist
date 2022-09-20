@@ -29,10 +29,10 @@ PAYMENT_TYPE = [
 class Complaint(models.Model):
     tenant = models.ForeignKey('users.Tenant', on_delete=models.CASCADE,related_name='complaint')
     image = models.ImageField(upload_to='static/complains', blank=True, null=True)
-    title = models.CharField(max_length=20)
+    title = models.CharField(max_length=50)
     description =  models.TextField()
     date =  models.DateTimeField(auto_now_add=True)
-    status = models.CharField(verbose_name='Complaint Status', default='Pending', max_length=200)
+    status = models.CharField(verbose_name='Complaint Status', default='', max_length=200)
     is_solved = models.BooleanField(default=False, verbose_name='Solved')
     urgency_level = models.CharField(choices=URGENCY_CHOICES,max_length =255)
 

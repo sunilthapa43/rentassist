@@ -108,6 +108,11 @@ class RunOcrAPIView(AuthByTokenMixin, GenericAPIView):
                 "message": "Invalid request"
             }
             return Response(response)
+        if not request.user.is_owner:
+            response =prepare_response(
+                success=False,
+                message='you are not allowed to ocr')
+            return Response(response)
         try: 
             image = request.data['image']
             obj = Ocr.objects.create(image=image, image_name=str(image))

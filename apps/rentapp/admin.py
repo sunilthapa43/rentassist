@@ -34,14 +34,20 @@ class ComplaintAdmin(admin.ModelAdmin):
         'title',
         'image',
         'description', 
-        'urgency_level'  
+        'urgency_level',
+        'is_solved',
+        'status'
+
     )
     fields = (
         'tenant',
         'title',
         'image',
         'description',
-        'urgency_level' 
+        'urgency_level',
+        'is_solved',
+        'status'
+
     )
 
 @admin.register(Room)

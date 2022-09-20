@@ -18,6 +18,7 @@ class Agreement(models.Model):
     water_usage_price = models.IntegerField( null=False, verbose_name = 'water_usage_price')
     nagarpalika_fohr_price = models.IntegerField( null=False, blank=False, verbose_name = 'Nagarpalika Fohr Price',)
     electricity_rate = models.IntegerField( verbose_name='electricity charge per unit')
+    picture =  models.ImageField(verbose_name='Agreement photos', upload_to ='static/agreements', blank=True, null=True)
     created =  models.DateField(auto_now= True)
     updated = models.DateField(auto_now_add=True)# auto now add
     deadline =  models.DateField(default=datetime.now().date()+timedelta(days=90))

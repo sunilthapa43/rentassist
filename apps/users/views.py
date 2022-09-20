@@ -41,14 +41,14 @@ class TenantViewSet(AuthByTokenMixin, ModelViewSet):
                 message = 'You are not allowed to fetch this API'
             )
             return Response(response)
-        queryset =  Tenant.objects.filter(owner = request.user.id)
+        queryset =  Tenant.objects.filter(owner__owner = request.user.id)
         serializer = TenantSerializer(queryset, many=True)
         return Response(serializer.data)
         
 
     def retrieve(self, request, pk=None, *args, **kwargs):
 
-        queryset = Tenant.objects.filter(owner = request.user.id)
+        queryset = Tenant.objects.filter(owner__owner = request.user.id)
         print('retreive is hit')
         tenant = get_object_or_404(queryset, pk = pk)
         serializer = TenantSerializer(tenant)

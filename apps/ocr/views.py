@@ -1,10 +1,10 @@
 
 import os
 from rentassist.settings import BASE_DIR
-from rentassist.utils.response import exception_response
+from rentassist.utils.response import exception_response, prepare_response
 from apps.ocr.ocr import ocr
-from .models import ElectricityUnit
-from .serializers import ConfigBatti, ElectricityUnitSerializer
+from .models import ElectricityUnit, Ocr
+from .serializers import  ElectricityUnitSerializer,  RunOcrSerializer
 from rentassist.utils.views import AuthByTokenMixin
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
@@ -19,46 +19,27 @@ class ElectricityUnitView(AuthByTokenMixin, GenericAPIView):
 
         if serializer.is_valid():
             try:
-                user = request.user
                 tenant = serializer.validated_data['tenant']
-                image = request.data['image']
-                print(image)
-                obj = ElectricityUnit.objects.update(tenant=tenant, image=image)
-                if obj:
-                    print('got obj')
-                path_to_image = 'static/meter-reader-images/' + str(image)
-                image_path = os.path.join(BASE_DIR, path_to_image) 
-                extracted_digits = ocr(image_path)
-                print(extracted_digits)
-                obj = ElectricityUnit.objects.get(tenant=tenant)
-                if not extracted_digits:  
-                    response = {
-                        "success": False,
-                        "message": "Could not run ocr"
-                        }
-                    return Response(response)
+                current_reading = serializer.validated_data['current_reading']
+                obj = ElectricityUnit.objects.get(tenant=tenant) 
+                previous_meter_reading = obj.current_reading if obj.current_reading else 0
+                previous_month_units =obj.current_units
+                obj.current_reading = current_reading
+                obj.current_units = current_reading - previous_meter_reading
+                obj.previous_month_reading = previous_meter_reading
+                obj.previous_month_units = previous_month_units
+                obj.save()
+                payable_units = current_reading - previous_meter_reading
+
+                response = {
+                    "success": True,
+                    "message": "Updated meter readings successfully",
+                    "data": serializer.data,
+                    "total_payable_unit_this_month": payable_units,
+                    "this_month_meter_reading": current_reading,
                     
-                    
-                else:
-                    previous_meter_reading = obj.current_reading if obj.current_reading else 0
-                    previous_month_units =obj.current_units
-                    obj.image = image
-                    obj.current_reading = extracted_digits
-                    obj.current_units = extracted_digits - previous_meter_reading
-                    obj.previous_month_reading = previous_meter_reading
-                    obj.previous_month_units = previous_month_units
-                    obj.save()
-                    payable_units = extracted_digits - previous_meter_reading
-    
-                    response = {
-                        "success": True,
-                        "message": "Run OCR Successfully",
-                        "data": serializer.data,
-                        "total_payable_unit_this_month": payable_units,
-                        "this_month_meter_reading": extracted_digits,
-                        
-                    }
-                    return Response(response)
+                }
+                return Response(response)
             except Exception as e:
                 return exception_response(e, serializer)
         else:
@@ -72,9 +53,9 @@ class ElectricityUnitView(AuthByTokenMixin, GenericAPIView):
 class ConfigureMeterAPIView(AuthByTokenMixin, GenericAPIView):
     """ At first the owner configures the meter count as when its time to pay rent, the tenant or owner scans the meter.
     So initial reading must be saved at first"""
-    serializer_class = ConfigBatti
+    serializer_class = ElectricityUnitSerializer
     def post(self, request, *args, **kwargs):
-        serializer = ConfigBatti(data=request.data)
+        serializer = ElectricityUnitSerializer(data=request.data)
         user = request.user
         
         if not serializer.is_valid():
@@ -90,29 +71,69 @@ class ConfigureMeterAPIView(AuthByTokenMixin, GenericAPIView):
                 "message": "Only Owner can set the initial meter reading"
             }
             return Response(response)
-        try:
 
+        try: 
             tenant = serializer.validated_data['tenant']
-            print(tenant)
-            image = request.data['image']
             current_reading = serializer.validated_data['current_reading']
-    
-    
             obj = ElectricityUnit.objects.create(
                 tenant=tenant,
-                image=image,
                 current_reading=current_reading,
                 current_units=0,
                 previous_month_reading = 0,
                 previous_month_units = 0
             )
             obj.save()
-    
-            response = {
-                "success":True,
-                "message":"Successfully added meter readings"
-            }
-            return response(response)
         
+            response = prepare_response(
+                success=True,
+                message="successfully added electricity details",
+                data= serializer.data
+            )
+            return response(response)
+            
         except Exception as e:
             return exception_response(e, serializer)
+
+    
+class RunOcrAPIView(AuthByTokenMixin, GenericAPIView):
+    serializer_class = RunOcrSerializer
+    queryset = Ocr.objects.all()
+
+
+    def post(self, request, *args, **kwargs):
+        serializer = RunOcrSerializer(data=request.data)
+        if not serializer.is_valid():
+            response = {
+                "success": False,
+                "message": "Invalid request"
+            }
+            return Response(response)
+        try: 
+            image = request.data['image']
+            obj = Ocr.objects.create(image=image, image_name=str(image))
+            obj.save()
+            path_to_image = 'static/meter-reader-images/' + str(image)
+            image_path = os.path.join(BASE_DIR, path_to_image) 
+            reading = ocr(image_path)
+            print(type(reading))
+            if reading:
+                obj = Ocr.objects.filter(image_name=str(image)).first()
+                obj.extracted_digits = reading
+                obj.save()
+                print('comes here')
+                response = prepare_response(
+                    success=True,
+                    message = "Successfully ran ocr",
+                    data =reading
+                )
+                
+                return Response(response)
+
+            else:  
+                response = {
+                    "success": False,
+                    "message": "Could not run ocr"
+                    }
+                return Response(response)
+        except Exception as e:
+          return exception_response(e, serializer)

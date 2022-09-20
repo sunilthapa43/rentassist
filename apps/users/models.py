@@ -26,11 +26,7 @@ class Owner(models.Model):
 class Tenant(models.Model): 
     tenant = models.OneToOneField(User, verbose_name='tenant name', on_delete=models.CASCADE, related_name='tenant')
     owner = models.ForeignKey(Owner, verbose_name='owner', on_delete=models.CASCADE, related_name='owner_of_this_tenant')
-    # room = models.OneToOneField('rentapp.Room',verbose_name='room', default=1, on_delete=models.CASCADE, related_name='room' )
-    def __str__(self):
-        return self.tenant.username
-
-
+    
 
 class EmailVerification(models.Model):
     created = models.DateTimeField(auto_now=True)

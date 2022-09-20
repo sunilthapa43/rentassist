@@ -1,5 +1,4 @@
-from .models import ElectricityUnit
-from rest_framework.serializers import ModelSerializer
+from .models import ElectricityUnit, Ocr
 from rest_framework import serializers  
 
 
@@ -7,11 +6,13 @@ class ElectricityUnitSerializer(serializers.ModelSerializer):
     class Meta:
         model = ElectricityUnit
         fields = (
-            'image',
-            'tenant'
+            'tenant',
+            'current_reading'
         )
 
-class ConfigBatti(serializers.ModelSerializer):
+class RunOcrSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ElectricityUnit
-        fields = ('tenant', 'image', 'current_reading')
+        model = Ocr
+        fields = ('image',)
+
+    

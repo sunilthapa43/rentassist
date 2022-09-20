@@ -66,16 +66,44 @@ class CustomUserDetailsSerializer(serializers.ModelSerializer):
 
 
 
+
+
 class TenantSerializer(serializers.ModelSerializer):
+
+    def get_fname(self, obj):
+        return obj.f_name()
+
+    def get_lname(self, obj):
+        return obj.l_name()
+    
+    def get_email(self, obj):
+        return obj.email()
+
+    def get_phone(self, obj):
+        return obj.get_phone()
+
+
+    def to_representation(self, instance):
+       response =  super().to_representation(instance)
+       response['first_name'] = instance.tenant.first_name
+       response['last_name'] = instance.tenant.last_name
+       response['email'] = instance.tenant.email
+       response['phone_number'] = str(instance.tenant.phone_number)
+       
+       return response
+        
     class Meta:
         model = Tenant
         fields = '__all__'
-        
+    
+
+   
 class TenantCreationSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Tenant
         fields = ('tenant',)
+
 
 class EmailVerifySerializer(serializers.ModelSerializer):
     class Meta:

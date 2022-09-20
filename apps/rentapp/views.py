@@ -1,11 +1,13 @@
 from urllib import response
 from xml.etree.ElementPath import prepare_star
+from django.shortcuts import get_object_or_404
+from phonenumbers import is_valid_number
 from rest_framework.response import Response
 
 from rentassist.utils.views import AuthByTokenMixin
 from .models import Complaint, Rent, Room
 from rest_framework import viewsets
-from .serializers import  ComplaintSerializer, ComplaintSerializerAdmin, RentSerializer, RoomSerializer
+from .serializers import  ComplaintCreationSerializer, ComplaintSerializer, ComplaintSerializerAdmin, RentSerializer, RoomSerializer
 from rentassist.utils.response import exception_response, prepare_response
      
 class RentViewSet(AuthByTokenMixin, viewsets.ModelViewSet):
@@ -24,7 +26,7 @@ class RentViewSet(AuthByTokenMixin, viewsets.ModelViewSet):
     
     
 
-class CompalaintViewSet(AuthByTokenMixin, viewsets.ModelViewSet):
+class ComplaintViewSet(AuthByTokenMixin, viewsets.ModelViewSet):
     queryset = Complaint.objects.all()
     serializer_class = ComplaintSerializer
 
@@ -56,7 +58,7 @@ class CompalaintViewSet(AuthByTokenMixin, viewsets.ModelViewSet):
                 message = 'You are not allowed to complain'
             )
             return Response(response)
-        serializer =  ComplaintSerializer(data=request.data ) 
+        serializer =  ComplaintCreationSerializer(data=request.data ) 
         if serializer.is_valid():
             try:
                 tenant = request.user.tenant
@@ -89,6 +91,20 @@ class CompalaintViewSet(AuthByTokenMixin, viewsets.ModelViewSet):
                 data=serializer.data
             )
             return Response(response)
+    
+    
+    # def update(self, request, pk=None, *args, **kwargs):
+    #     queryset = Complaint.objects.filter(tenant__owner = request.user.id)
+    #     obj = get_object_or_404(queryset, pk=pk)
+        
+    #     if not obj:
+    #         response = prepare_response(
+    #                  success=False,
+    #                  message='Does not exist'
+    #              )
+    #         return Response(response)  
+    #     serializer =  ComplaintSerializer(obj) 
+    #     serializer.save()
 
 class RoomViewSet(AuthByTokenMixin, viewsets.ModelViewSet):
     queryset = Room.objects.all()

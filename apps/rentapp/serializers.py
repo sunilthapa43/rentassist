@@ -13,6 +13,11 @@ class ComplaintSerializer(serializers.ModelSerializer):
     class Meta:
         model = Complaint
         exclude =('tenant',)
+
+class ComplaintCreationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Complaint
+        exclude = ('tenant', 'date', 'is_solved')
     
 
 class ComplaintSerializerAdmin(serializers.ModelSerializer):

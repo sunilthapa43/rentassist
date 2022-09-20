@@ -6,8 +6,8 @@ class MessageSerializer(ModelSerializer):
         model = Message
         fields = ['receiver', 'message']
 
+class AllMessageSerializers(ModelSerializer):
 
-class MessageViewSerializer(ModelSerializer):
     class Meta:
         model = Message
-        fields = ['receiver',]
+        fields = '__all__'

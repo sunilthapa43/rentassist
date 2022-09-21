@@ -75,6 +75,7 @@ class AgreementViewSet(AuthByTokenMixin, ModelViewSet):
                        electricity_rate=electricity_rate, 
                        nagarpalika_fohr_price=nagarpalika_fohr_price,
                        internet_price=internet_price )
+            instance.save()
             response = {
                 "success": True,
                 "message": "Successfully formed contract",

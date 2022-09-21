@@ -28,7 +28,7 @@ def post_complain(sender, instance, created, weak=False, *args, **kwargs):
     obj = Notification.objects.create(tenant=instance.tenant,
     target=instance.tenant.owner.owner,
     type='C',
-    title='you received a compalint: ' + str(instance.title) + 'from ' + str(instance.tenant) ,
+    title='Complaint from '+ str(instance.tenant.first_name) ,
     is_read=False
     )
     obj.save()
@@ -38,15 +38,28 @@ def post_complain(sender, instance, created, weak=False, *args, **kwargs):
 @receiver(post_save, sender=Agreement)
 def post_saved_agreement(sender, instance, created, weak=False, *args, **kwargs):
     if created:
-        obj =  Notification.objects.update_or_create(
+        obj =  Notification.objects.create(
             tenant=instance.tenant,
-            title= 'Agreement formed with ' +str(instance.tenant) + " on rent",
+            title= 'Agreement formed with ' +str(instance.tenant.first_name) + " on rent",
             target=instance.tenant.owner.owner,
             type='A',
             is_read=False)
-         
+        obj.save()
+        obj =  Notification.objects.create(
+            tenant=instance.tenant,
+            title= 'Agreement formed with ' +str(instance.tenant.owner.owner.first_name) + " on rent",
+            target=instance.tenant.tenant,
+            type='A',
+            is_read=False)
+        obj.save()        
     else:
-        pass  
+        obj =  Notification.objects.create(
+            tenant=instance.tenant,
+            title= 'Agreement updated with ' +str(instance.tenant) + " on rent",
+            target=instance.tenant.owner.owner,
+            type='CE',
+            is_read=False)
+        obj.save()
 
 
 

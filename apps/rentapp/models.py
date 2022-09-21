@@ -116,9 +116,10 @@ class Rent(models.Model):
 
 class Room(models.Model):
     owner = models.ForeignKey('users.Owner', on_delete=models.CASCADE, related_name='room_owner', verbose_name='owner user')
+    image = models.ImageField(verbose_name='Dummy Agreement Image', null=True, blank=True, upload_to = 'static/agreements')
     price = models.IntegerField(verbose_name='rent amount', null=False, blank=False)
     internet_price = models.IntegerField(verbose_name = 'Internet Price', default=0)
-    water_usage_price = models.IntegerField( null=False, verbose_name = 'water_usage_price')
+    water_usage_price = models.IntegerField(null=False, verbose_name = 'water_usage_price')
     nagarpalika_fohr_price = models.IntegerField( null=False, blank=False, verbose_name = 'Nagarpalika Fohr Price',)
     electricity_rate = models.IntegerField( verbose_name='electricity charge per unit')
     created =  models.DateField(auto_now= True)

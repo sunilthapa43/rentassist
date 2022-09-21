@@ -1,3 +1,4 @@
+import json
 import requests
 
 
@@ -24,4 +25,14 @@ def run_ocr(filename, overlay=False, api_key='K89066063988957', language='eng'):
                           files={filename: f},
                           data=payload,
                           )
-    return r.content.decode()
+    
+    reading =  r.content.decode()
+    y = json.loads(reading)
+    _reading = y['ParsedResults'][0]['ParsedText']
+    res = _reading.replace('o', '0')
+    res = res.replace('T', '1')
+    res = res.replace('E', '')
+    res =res.replace('Z', '2')
+    res = res.replace(' ', '')
+    print(res)
+    return res

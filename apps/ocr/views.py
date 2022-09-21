@@ -1,4 +1,7 @@
 
+from decimal import Decimal
+from email import message
+import json
 import os
 from rentassist.runocr import run_ocr
 from rentassist.settings import BASE_DIR
@@ -170,27 +173,30 @@ class RunOcrAPIView(AuthByTokenMixin, GenericAPIView):
             path_to_image = 'static/meter-reader-images/' + str(image)
             image_path = os.path.join(BASE_DIR, path_to_image) 
             # reading = ocr(image_path)
-            reading = run_ocr(filename=image_path)
-            print(reading)
-            print(type(reading))
-            if reading:
-            #     obj = Ocr.objects.filter(image_name=str(image)).first()
-            #     obj.extracted_digits = reading
-            #     obj.save()
-            #     print('comes here')
+            result = run_ocr(filename=image_path)
+            
+            if result == "":
+                obj = Ocr.objects.filter(image_name=str(image)).first()
+                reading = obj.extracted_digits
+                response = prepare_response(
+                    success=True,
+                    message='successfully ran ocr',
+                    data = reading
+                )
+                return Response(response)
+            else:
+               
+                data =Decimal(result[:5] + '.' + result[5:])
+                obj = Ocr.objects.filter(image_name=str(image)).first()
+                obj.extracted_digits = data
+                obj.save()
                 response = prepare_response(
                     success=True,
                     message = "Successfully ran ocr",
-                    data =reading
+                    data =data
                 )
                 
                 return Response(response)
-
-            # else:  
-            #     response = {
-            #         "success": False,
-            #         "message": "Could not run ocr"
-            #         }
-            #     return Response(response)
+            
         except Exception as e:
           return exception_response(e, serializer)

@@ -11,3 +11,9 @@ class AllMessageSerializers(ModelSerializer):
     class Meta:
         model = Message
         fields = '__all__'
+    
+class GetMessageSerializer(ModelSerializer):
+
+    class Meta:
+        model = Message
+        fields = '__all__'

@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 from rentassist.utils.response import prepare_response
 
-from .serializers import AllMessageSerializers, MessageSerializer
+from .serializers import AllMessageSerializers, GetMessageSerializer, MessageSerializer
 from rest_framework.viewsets import ModelViewSet
 
 from rentassist.utils.views import AuthByTokenMixin
@@ -16,35 +16,7 @@ from rest_framework.generics import GenericAPIView
 
 class ChatAPIView(AuthByTokenMixin, GenericAPIView):
     serializer_classes = MessageSerializer
-    def get(self, request, *args, **kwargs):
-        receiver = request.GET['friend']
-        if not receiver:
-           response = {
-               "success": False,
-               "message": 'Invalid request, need friend id to get the conversation'
-           }
-           return Response(response)
-        sender = request.user
-        sent_message = Message.objects.filter(sender=sender, receiver=receiver)
-        received_message = Message.objects.filter(sender=receiver, receiver=sender)
-        if sent_message.exists() or received_message.exists():
-            sent_messages = serializers.serialize('json', sent_message)
-            received_messages = serializers.serialize('json', received_message)
-            for msg in received_message:
-                msg.is_read=True
-                msg.save()
-            response = {
-                "succes":True,
-                "message":"Successfully fetched the conversation",
-                "sent_message":sent_messages,
-                "received_message": received_messages
-            }
-            return Response(response)
-        response ={
-            "success":True,
-            "message":"Inbox Empty"
-        }
-        return Response(response)
+
     
     def post(self, request, *args, **kwargs):
         serializer = MessageSerializer(data=request.data)
@@ -85,3 +57,60 @@ class FetchAllMessages(AuthByTokenMixin, ModelViewSet):
 
 # annot resolve keyword 'created' into field. Choices are: id, is_read, message, receiver, receiver_id, sender, sender_id, sent_at
 # XXXModels.objects.values('{filed}').distinct()
+
+class GetConversationViewSet(AuthByTokenMixin, ModelViewSet):
+    serializer_class = GetMessageSerializer
+    def list(self, request, *args, **kwargs):
+        sender = request.user
+        receiver = request.GET['friend']
+        if not receiver:
+            response = {
+                "success": False,
+                "message": 'Invalid request, need friend id to get the conversation'
+            }
+            return Response(response)
+        
+        sent_message = Message.objects.filter(sender=sender, receiver=receiver).order_by('-sent_at')
+        received_message = Message.objects.filter(sender=receiver, receiver=sender).order_by('-sent_at')
+        
+        if sent_message.exists() or received_message.exists():
+            queryset = sent_message.union(received_message)
+            serializer = GetMessageSerializer(queryset, many = True)
+            response = prepare_response(
+            success=True,
+            message=f"Your conversation with {receiver} fetched successfully",
+            data= serializer.data
+        )
+        return Response(response)
+
+
+    # def get(self, request, *args, **kwargs):
+    #     receiver = request.GET['friend']
+    #     if not receiver:
+    #        response = {
+    #            "success": False,
+    #            "message": 'Invalid request, need friend id to get the conversation'
+    #        }
+    #        return Response(response)
+    #     sender = request.user
+        # sent_message = Message.objects.filter(sender=sender, receiver=receiver)
+        # received_message = Message.objects.filter(sender=receiver, receiver=sender)
+        
+        # if sent_message.exists() or received_message.exists():
+        #     queryset = sent_message.union(received_message)
+        #     queryset = serializers.serialize('json', queryset)
+            
+        #     for msg in received_message:
+        #         msg.is_read=True
+        #         msg.save()
+        #     response = {
+        #         "succes":True,
+        #         "message":"Successfully fetched the conversation",
+        #         "conversation":queryset
+        #     }
+        #     return Response(response)
+        # response ={
+        #     "success":True,
+        #     "message":"Inbox Empty"
+        # }
+        # # return Response(response)

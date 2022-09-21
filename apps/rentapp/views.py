@@ -1,3 +1,6 @@
+from email import message
+from lib2to3.pytree import type_repr
+from os import execv
 from urllib import response
 from xml.etree.ElementPath import prepare_star
 from django.shortcuts import get_object_or_404
@@ -5,9 +8,10 @@ from phonenumbers import is_valid_number
 from rest_framework.response import Response
 
 from rentassist.utils.views import AuthByTokenMixin
+from users.models import Owner
 from .models import Complaint, Rent, Room
 from rest_framework import viewsets
-from .serializers import  ComplaintCreationSerializer, ComplaintSerializer, ComplaintSerializerAdmin, RentSerializer, RoomSerializer
+from .serializers import  ComplaintCreationSerializer, ComplaintSerializer, ComplaintSerializerAdmin, CreateRoomSerializer, RentSerializer, RoomSerializer
 from rentassist.utils.response import exception_response, prepare_response
      
 class RentViewSet(AuthByTokenMixin, viewsets.ModelViewSet):
@@ -109,3 +113,45 @@ class ComplaintViewSet(AuthByTokenMixin, viewsets.ModelViewSet):
 class RoomViewSet(AuthByTokenMixin, viewsets.ModelViewSet):
     queryset = Room.objects.all()
     serializer_class = RoomSerializer
+
+    def create(self, request, *args, **kwargs):
+        owner = request.user
+        o = Owner.objects.get(owner = owner)
+        print(o)
+        print(type(o))
+        serializer = CreateRoomSerializer(data=request.data)
+        if serializer.is_valid():
+            image=serializer.validated_data['image']
+            price = serializer.validated_data['price']
+            internet_price = serializer.validated_data['internet_price']
+            water_usage_price = serializer.validated_data['water_usage_price']
+            nagarpalika_fohr_price = serializer.validated_data['nagarpalika_fohr_price']
+            electricity_rate = serializer.validated_data['electricity_rate']
+            try:
+                obj = Room.objects.create(
+                    owner=o,
+                    image=image,
+                    price=price,
+                    internet_price=internet_price,
+                    water_usage_price=water_usage_price,
+                    nagarpalika_fohr_price=nagarpalika_fohr_price,
+                    electricity_rate = electricity_rate
+                )
+                obj.save()
+                response = prepare_response(
+                    success=True,
+                    message='successfully added dummy agreement on room',
+                    data = serializer.data
+                )
+                return Response(response)
+            
+            except Exception as e:
+                return exception_response(e, serializer)
+        
+        else:
+            response = prepare_response(
+                success=False,
+                message='Invalid request',
+                data=serializer.data
+            )
+            return Response(response)

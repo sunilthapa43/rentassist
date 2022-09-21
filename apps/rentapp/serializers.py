@@ -32,3 +32,10 @@ class RoomSerializer(serializers.ModelSerializer):
     class Meta:
         model=Room
         fields =  '__all__'
+
+
+class CreateRoomSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Room
+        exclude = ('owner',)

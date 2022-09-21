@@ -74,12 +74,14 @@ class TenantCreationAPIView(AuthByTokenMixin, GenericAPIView):
             print(id)
             obj = Tenant.objects.filter(tenant=tenant, owner=owner).first()
             if not obj:
-                Tenant.objects.create(tenant=tenant, owner=owner)
+                obj  = Tenant.objects.create(tenant=tenant, owner=owner)
+                obj.save()
                 response = prepare_response(
                    success=True,
                    message='created successfully',
                    data=serializer.data,
                    meta={
+                    "tenant_id":obj.id,
                     "owner": owner.owner.username,
                     "tenant":tenant.username
                    }
@@ -91,6 +93,7 @@ class TenantCreationAPIView(AuthByTokenMixin, GenericAPIView):
                    message='Already exists tenant to this owner',
                    data=serializer.data,
                    meta={
+                    "tenant_id":obj.id,
                     "owner": owner.owner.username,
                     "tenant":tenant.username
                    }

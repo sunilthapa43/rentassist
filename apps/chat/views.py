@@ -80,8 +80,8 @@ class GetConversationViewSet(AuthByTokenMixin, ModelViewSet):
             success=True,
             message=f"Your conversation with {receiver} fetched successfully",
             data= serializer.data
-        )
-        return Response(response)
+            )
+            return Response(response)
 
 
     # def get(self, request, *args, **kwargs):

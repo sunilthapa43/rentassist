@@ -18,4 +18,5 @@ class AgreementSerializer(ModelSerializer):
             'water_usage_price',
             'nagarpalika_fohr_price',
             'electricity_rate',
+            'picture'
         )

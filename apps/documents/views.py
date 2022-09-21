@@ -66,6 +66,7 @@ class AgreementViewSet(AuthByTokenMixin, ModelViewSet):
         water_usage_price =  serializer.validated_data['water_usage_price']
         electricity_rate =  serializer.validated_data['electricity_rate']
         nagarpalika_fohr_price =  serializer.validated_data['nagarpalika_fohr_price']
+        picture = serializer.validated_data['picture']
         
         obj = Agreement.objects.filter(tenant=tenant)
         if not obj.exists():
@@ -75,7 +76,8 @@ class AgreementViewSet(AuthByTokenMixin, ModelViewSet):
                        water_usage_price=water_usage_price, 
                        electricity_rate=electricity_rate, 
                        nagarpalika_fohr_price=nagarpalika_fohr_price,
-                       internet_price=internet_price )
+                       internet_price=internet_price,
+                       picture = picture )
             instance.save()
             response = {
                 "success": True,

@@ -66,6 +66,7 @@ class AgreementViewSet(AuthByTokenMixin, ModelViewSet):
         water_usage_price =  serializer.validated_data['water_usage_price']
         electricity_rate =  serializer.validated_data['electricity_rate']
         nagarpalika_fohr_price =  serializer.validated_data['nagarpalika_fohr_price']
+        
         obj = Agreement.objects.filter(tenant=tenant)
         if not obj.exists():
             instance = Agreement.objects.create(

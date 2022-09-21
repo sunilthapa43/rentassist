@@ -62,31 +62,38 @@ class TenantCreationAPIView(AuthByTokenMixin, GenericAPIView):
         serializer = TenantCreationSerializer(data=request.data)
         print('this api hit')
         if not serializer.is_valid():
-           response=prepare_response(
-               success=False,
-               message='Invalid Request'
-           )
-           return Response(response)
+            response=prepare_response(
+                success=False,
+                message='Invalid Request'
+            )
+            return Response(response)
         try:
 
-            tenant = serializer.validated_data['tenant']
-            owner = request.user
-            id = Owner.objects.get(owner = owner)
+            owner = serializer.validated_data['owner']
+            tenant = request.user
             print(id)
-            obj = Tenant.objects.filter(tenant=tenant, owner=owner.id).first()
+            obj = Tenant.objects.filter(tenant=tenant, owner=owner).first()
             if not obj:
-                Tenant.objects.create(tenant=tenant, owner=id)
+                Tenant.objects.create(tenant=tenant, owner=owner)
                 response = prepare_response(
                    success=True,
                    message='created successfully',
-                   data=serializer.data
+                   data=serializer.data,
+                   meta={
+                    "owner": owner.username,
+                    "tenant":tenant.username
+                   }
                 )
                 return Response(response)
             else:
                 response = prepare_response(
                    success=False,
                    message='Already exists tenant to this owner',
-                   data=serializer.data
+                   data=serializer.data,
+                   meta={
+                    "owner": owner.owner.username,
+                    "tenant":tenant.username
+                   }
                 )
                 return Response(response)
                

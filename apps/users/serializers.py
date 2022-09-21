@@ -102,7 +102,7 @@ class TenantCreationSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Tenant
-        fields = ('tenant',)
+        fields = ('owner',)
 
 
 class EmailVerifySerializer(serializers.ModelSerializer):

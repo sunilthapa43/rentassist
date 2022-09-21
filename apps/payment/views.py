@@ -41,6 +41,7 @@ class KhaltiVerifyView(AuthByTokenMixin, GenericAPIView):
                         )
 
         payment_response = khalti.verify_request()
+        print(payment_response)
         if 'idx' in payment_response:
             Transaction.objects.create(
                 initiator=self.request.user,

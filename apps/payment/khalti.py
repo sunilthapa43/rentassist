@@ -1,7 +1,7 @@
 
 import os
 import requests
-my_test_key = os.environ.get('KHALTI_TEST_KEYS')
+my_test_key = 'test_secret_key_628669de2b844a73b0b5a8c86db738ff'
 
 class Khalti:
 

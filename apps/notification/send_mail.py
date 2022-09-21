@@ -8,12 +8,14 @@ from django.core.mail import send_mail
 
 def switcher(type):
     to_subject = {
-        'D':'Deadline Approach',
-        'S':'Deadline Skipped',
-        'C':'Complaint',
-        'P':'Online Payment',
-        'O':'Other Payment',
-        'A':'Agreement Formed or Updated'
+        'D': 'Deadline Approach',
+        'S': 'Deadline Skipped',
+        'C': 'Complaint',
+        'P': 'Payment',
+        'O': 'Other Payment',
+        'A': 'Agreement Formed',
+        'CE': 'Contract Extended',
+        'E': 'Contract Expiry',
     }
     return to_subject.get(type)
 

@@ -73,7 +73,7 @@ class FetchAllMessages(AuthByTokenMixin, ModelViewSet):
     queryset = Message.objects.all()
 
     def list(self, request, *args, **kwargs):
-        queryset = Message.objects.filter(receiver = request.user.id)
+        queryset = Message.objects.filter(receiver = request.user.id).order_by('sender', '-sent_at').distinct('sender')
         serializer = AllMessageSerializers(queryset, many = True)
 
         response = prepare_response(
@@ -82,3 +82,6 @@ class FetchAllMessages(AuthByTokenMixin, ModelViewSet):
             data= serializer.data
         )
         return Response(response)
+
+# annot resolve keyword 'created' into field. Choices are: id, is_read, message, receiver, receiver_id, sender, sender_id, sent_at
+# XXXModels.objects.values('{filed}').distinct()

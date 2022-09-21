@@ -6,6 +6,22 @@ from .models import Notification
 # from documents.signals import agreement_deadline_approach, agreement_deadline_skipped
 
 
+from fcm_django.models import FCMDevice
+from firebase_admin.messaging import Message as FirebaseMessage, Notification as FirebaseNotification
+
+def switcher(type):
+    to_subject = {
+        'D': 'Deadline Approach',
+        'S': 'Deadline Skipped',
+        'C': 'Complaint',
+        'P': 'Payment',
+        'O': 'Other Payment',
+        'A': 'Agreement Formed',
+        'CE': 'Contract Extended',
+        'E': 'Contract Expiry',
+    }
+    return to_subject.get(type)
+
 
 @receiver(post_save, sender = Complaint)
 def post_complain(sender, instance, created, weak=False, *args, **kwargs):
@@ -32,3 +48,27 @@ def post_saved_agreement(sender, instance, created, weak=False, *args, **kwargs)
     else:
         pass  
 
+
+
+@receiver(post_save, sender=Notification)
+def fcm_push_notification(sender, instance, created, weak=False, *args, **kwargs):
+    if created:
+        id = instance.id
+        type= switcher(instance.type)
+
+        message = instance.title
+        receiver = instance.target
+        try:
+          devices = FCMDevice.objects.filter(user = receiver, active=True).first()
+          print(devices)
+          fcm_message = FirebaseMessage(notification=FirebaseNotification(
+            title='New Notification on ' + type,
+            body = str(message), 
+          ),
+        #   topic='New Message'
+          )
+          devices.send_message(fcm_message)
+          print('message is sent')
+
+        except Exception as e:
+            print(e)

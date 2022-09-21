@@ -1,5 +1,6 @@
 
 import os
+from rentassist.runocr import run_ocr
 from rentassist.settings import BASE_DIR
 from rentassist.utils.response import exception_response, prepare_response
 from apps.ocr.ocr import ocr
@@ -95,6 +96,55 @@ class ConfigureMeterAPIView(AuthByTokenMixin, GenericAPIView):
             return exception_response(e, serializer)
 
     
+# class RunOcrAPIView(AuthByTokenMixin, GenericAPIView):
+#     serializer_class = RunOcrSerializer
+#     queryset = Ocr.objects.all()
+
+
+#     def post(self, request, *args, **kwargs):
+#         serializer = RunOcrSerializer(data=request.data)
+#         if not serializer.is_valid():
+#             response = {
+#                 "success": False,
+#                 "message": "Invalid request"
+#             }
+#             return Response(response)
+#         if not request.user.is_owner:
+#             response =prepare_response(
+#                 success=False,
+#                 message='you are not allowed to ocr')
+#             return Response(response)
+#         try: 
+#             image = request.data['image']
+#             obj = Ocr.objects.create(image=image, image_name=str(image))
+#             obj.save()
+#             path_to_image = 'static/meter-reader-images/' + str(image)
+#             image_path = os.path.join(BASE_DIR, path_to_image) 
+#             reading = ocr(image_path)
+#             print(type(reading))
+#             if reading:
+#                 obj = Ocr.objects.filter(image_name=str(image)).first()
+#                 obj.extracted_digits = reading
+#                 obj.save()
+#                 print('comes here')
+#                 response = prepare_response(
+#                     success=True,
+#                     message = "Successfully ran ocr",
+#                     data =reading
+#                 )
+                
+#                 return Response(response)
+
+#             else:  
+#                 response = {
+#                     "success": False,
+#                     "message": "Could not run ocr"
+#                     }
+#                 return Response(response)
+#         except Exception as e:
+#           return exception_response(e, serializer)
+
+
 class RunOcrAPIView(AuthByTokenMixin, GenericAPIView):
     serializer_class = RunOcrSerializer
     queryset = Ocr.objects.all()
@@ -119,13 +169,15 @@ class RunOcrAPIView(AuthByTokenMixin, GenericAPIView):
             obj.save()
             path_to_image = 'static/meter-reader-images/' + str(image)
             image_path = os.path.join(BASE_DIR, path_to_image) 
-            reading = ocr(image_path)
+            # reading = ocr(image_path)
+            reading = run_ocr(filename=image_path)
+            print(reading)
             print(type(reading))
             if reading:
-                obj = Ocr.objects.filter(image_name=str(image)).first()
-                obj.extracted_digits = reading
-                obj.save()
-                print('comes here')
+            #     obj = Ocr.objects.filter(image_name=str(image)).first()
+            #     obj.extracted_digits = reading
+            #     obj.save()
+            #     print('comes here')
                 response = prepare_response(
                     success=True,
                     message = "Successfully ran ocr",
@@ -134,11 +186,11 @@ class RunOcrAPIView(AuthByTokenMixin, GenericAPIView):
                 
                 return Response(response)
 
-            else:  
-                response = {
-                    "success": False,
-                    "message": "Could not run ocr"
-                    }
-                return Response(response)
+            # else:  
+            #     response = {
+            #         "success": False,
+            #         "message": "Could not run ocr"
+            #         }
+            #     return Response(response)
         except Exception as e:
           return exception_response(e, serializer)

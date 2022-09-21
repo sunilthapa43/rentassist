@@ -141,7 +141,10 @@ class RoomViewSet(AuthByTokenMixin, viewsets.ModelViewSet):
                 response = prepare_response(
                     success=True,
                     message='successfully added dummy agreement on room',
-                    data = serializer.data
+                    data = serializer.data,
+                    meta={
+                        "id":obj.id
+                    }
                 )
                 return Response(response)
             

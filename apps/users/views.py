@@ -187,6 +187,7 @@ class MyOwnerDetailsView(AuthByTokenMixin, GenericAPIView):
                     "success": True,
                     "message": "Owner details fetched successfully",
                     "details": {
+                        "id":owner.id,
                         "first_name": owner_firstname,
                         "last_name": owner_lastname,
                         "email": owner_username,

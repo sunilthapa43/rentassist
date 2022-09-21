@@ -80,7 +80,7 @@ class TenantCreationAPIView(AuthByTokenMixin, GenericAPIView):
                    message='created successfully',
                    data=serializer.data,
                    meta={
-                    "owner": owner.username,
+                    "owner": owner.owner.username,
                     "tenant":tenant.username
                    }
                 )

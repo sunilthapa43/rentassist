@@ -5,7 +5,7 @@ from .models import Agreement, Document
 class DocumentSerializer(ModelSerializer):
     class Meta:
         model = Document
-        fields = ('citizenship',)
+        fields = '__all__'
 
 
 class AgreementSerializer(ModelSerializer):

@@ -155,7 +155,7 @@ class AllTransactionsAPIView(AuthByTokenMixin, ModelViewSet):
             return Response(response)
         
         elif not request.user.is_owner:
-            queryset = AllTransaction.objects.filter(initiator__tenant__tenant = request.user)
+            queryset = AllTransaction.objects.filter(initiator__tenant = request.user)
             serializer = AllTransactionSerializer(queryset, many=True)
             response ={
                 "success":True,

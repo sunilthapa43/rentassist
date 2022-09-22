@@ -24,7 +24,7 @@ class Notification(models.Model):
     title = models.CharField(max_length=100, null=False, blank=False, verbose_name='Title')
     type = models.CharField(choices=NOTIFICATION_TYPES, max_length=30, verbose_name='type of notification', blank=False)
     target = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Notification target')
-    deep_link = models.CharField(max_length=50, default = 'rentassist2021/api/notifications')
+    deep_link = models.CharField(max_length=70, default = 'rentassist2021/api/notifications')
 
     def __str__(self) -> str:
         return f'triggered by {self.tenant} received by {self.target.username} '

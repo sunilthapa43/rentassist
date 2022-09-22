@@ -59,8 +59,8 @@ def config_batti(sender, instance, created, weak=False, *args, **kwargs):
         obj = Notification.objects.create(
             tenant = instance,
             target = instance.owner.owner,
-            deep_link = f'rentassist2021.herokuapp.com/ocr/config-meter/',
-            title = f'{instance.tenant} has registered as your tenant. Please configure the meter for future references.',
+            deep_link = f'/choose-tenant?config=true',
+            title = f'Click here to configure meter for {instance.tenant.first_name}',
             type = 'CM'
         )
         obj.save()

@@ -74,22 +74,39 @@ class ConfigureMeterAPIView(AuthByTokenMixin, GenericAPIView):
         try: 
             tenant = serializer.validated_data['tenant']
             current_reading = serializer.validated_data['current_reading']
-            obj = ElectricityUnit.objects.create(
-                tenant=tenant,
-                current_reading=current_reading,
-                current_units=0,
-                previous_month_reading = 0,
-                previous_month_units = 0
-            )
-            obj.save()
-        
-            response = prepare_response(
-                success=True,
-                message="successfully added electricity details",
-                data= serializer.data
-            )
-            return Response(response)
+            obj = ElectricityUnit.objects.filter(tenant=tenant)
+            if obj.count() == 0:
+                obj = ElectricityUnit.objects.create(
+                    tenant=tenant,
+                    current_reading=current_reading,
+                    current_units=0,
+                    previous_month_reading = 0,
+                    previous_month_units = 0
+                )
+                obj.save()
             
+                response = prepare_response(
+                    success=True,
+                    message="successfully added electricity details",
+                    data= serializer.data
+                )
+                return Response(response)
+            
+            elif obj.count() == 1:
+                instance =  ElectricityUnit.objects.get(tenant=tenant)  
+                instance.tenant=tenant
+                instance.current_reading=current_reading
+                instance.current_units=0
+                instance.previous_month_reading = 0
+                instance.previous_month_units = 0  
+                instance.save()
+        
+                response = prepare_response(
+                    success=True,
+                    message="successfully added electricity details",
+                    data= serializer.data
+                )
+                return Response(response)
         except Exception as e:
             return exception_response(e, serializer)
 

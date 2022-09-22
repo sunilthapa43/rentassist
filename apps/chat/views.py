@@ -83,6 +83,12 @@ class GetConversationViewSet(AuthByTokenMixin, ModelViewSet):
             )
             return Response(response)
 
+        else:
+            response ={
+            "success":True,
+            "message":"Inbox Empty"
+        }
+        return Response(response)
 
     # def get(self, request, *args, **kwargs):
     #     receiver = request.GET['friend']

@@ -1,14 +1,8 @@
-from email import message
-from lib2to3.pytree import type_repr
-from os import execv
-from urllib import response
-from xml.etree.ElementPath import prepare_star
-from django.shortcuts import get_object_or_404
-from phonenumbers import is_valid_number
 from rest_framework.response import Response
-
+from rest_framework.generics import GenericAPIView
 from rentassist.utils.views import AuthByTokenMixin
 from users.models import Owner
+from django.db.models import Sum
 from .models import Complaint, Rent, Room
 from rest_framework import viewsets
 from .serializers import  ComplaintCreationSerializer, ComplaintSerializer, ComplaintSerializerAdmin, CreateRoomSerializer, RentSerializer, RoomSerializer
@@ -18,17 +12,24 @@ class RentViewSet(AuthByTokenMixin, viewsets.ModelViewSet):
     serializer_class = RentSerializer
     queryset = Rent.objects.all()
     def list(self, request, *args, **kwargs):
-        queryset = Rent.objects.filter(tenant__owner = request.user.id) 
+        queryset = Rent.objects.filter(tenant__owner__owner = request.user.id) 
         serializer = RentSerializer(queryset, many=True)
         if request.user.is_owner:
             return Response(serializer.data)    
         
         if not request.user.is_owner:
-            queryset = Rent.objects.filter(tenant=request.user.tenant)
+            queryset = Rent.objects.filter(tenant__tenant__tenant=request.user.tenant)
             serializer = RentSerializer(queryset, many=True)
             return Response(serializer.data)
     
-    
+
+class DueRentView(AuthByTokenMixin, GenericAPIView):
+    def get(self, request, *args, **kwargs):
+        queryset = Rent.objects.filter(tenant__owner__owner = request.user.id)
+        print(queryset)
+        due_amount = queryset.aggregate(Sum('due_amount'))
+
+        return Response(due_amount)
 
 class ComplaintViewSet(AuthByTokenMixin, viewsets.ModelViewSet):
     queryset = Complaint.objects.all()

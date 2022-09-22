@@ -1,6 +1,7 @@
+from django.urls import include
 from django.urls import path
 from rest_framework.routers import DefaultRouter
-from .views import ComplaintViewSet, RentViewSet, RoomViewSet
+from .views import ComplaintViewSet, DueRentView, RentViewSet, RoomViewSet
 
 
 
@@ -11,6 +12,9 @@ router.register('complaints',ComplaintViewSet, basename= 'complaint')
 # router.register('notifications', NotificationViewSet, basename= 'notification')
 
 
-urlpatterns = router.urls
+urlpatterns =[
+    path('due_amount/', DueRentView.as_view()),
+    path('', include(router.urls))
+] 
 
 

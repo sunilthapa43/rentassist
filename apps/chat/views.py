@@ -46,6 +46,7 @@ class FetchAllMessages(AuthByTokenMixin, ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         queryset = Message.objects.filter(receiver = request.user.id).order_by('sender', '-id').distinct('sender')
+        
         serializer = AllMessageSerializers(queryset, many = True)
 
         response = prepare_response(

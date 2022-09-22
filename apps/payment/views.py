@@ -175,6 +175,20 @@ class WithDrawView(AuthByTokenMixin, GenericAPIView):
         serializer = DepositSerializer(data=request.data)
         if serializer.is_valid():
             obj = Deposit.objects.get(owner__owner = request.user)
+            owner_name = str(obj.owner.owner.first_name) + ' ' + str(obj.owner.owner.last_name)
+            amount = obj.amount
+            response = {
+                "success":True,
+                "message":"Successfully fetched your balance",
+                "name": owner_name,
+                "amount":amount
+            }
+            return Response(response)
+
+    def post(self, request, *args, **kwargs):
+        serializer = DepositSerializer(data=request.data)
+        if serializer.is_valid():
+            obj = Deposit.objects.get(owner__owner = request.user)
             initial_amount = obj.amount
             obj.amount = 0
             obj.save()

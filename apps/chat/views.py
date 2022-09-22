@@ -74,6 +74,9 @@ class GetConversationViewSet(AuthByTokenMixin, ModelViewSet):
         received_message = Message.objects.filter(sender=receiver, receiver=sender).order_by('-sent_at')
         
         if sent_message.exists() or received_message.exists():
+            for m in received_message:
+                m.is_read=True
+                m.save()
             queryset = sent_message.union(received_message)
             serializer = GetMessageSerializer(queryset, many = True)
             response = prepare_response(

@@ -1,7 +1,5 @@
 
 from decimal import Decimal
-from email import message
-import json
 import os
 from rentassist.runocr import run_ocr
 from rentassist.settings import BASE_DIR
@@ -12,8 +10,6 @@ from .serializers import  ElectricityUnitSerializer,  RunOcrSerializer
 from rentassist.utils.views import AuthByTokenMixin
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
-from rest_framework.parsers import MultiPartParser
-
 
 class ElectricityUnitView(AuthByTokenMixin, GenericAPIView):
     serializer_class = ElectricityUnitSerializer

@@ -19,5 +19,6 @@ class OtherPaymentSerializer(serializers.ModelSerializer):
 
 
 class AllTransactionSerializer(serializers.ModelSerializer):
-    model = AllTransaction
-    fields = '__all__'
+    class Meta:
+        model = AllTransaction
+        fields = '__all__'

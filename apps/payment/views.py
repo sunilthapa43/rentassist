@@ -7,7 +7,8 @@ from .serializers import AllTransactionSerializer, KhaltiVerifySerializer, Other
 from rentassist.utils.response import exception_response, prepare_response
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
-from .models import Transaction
+from .models import AllTransaction, Transaction
+from rest_framework.viewsets import ModelViewSet
 
 
 # generate pdf
@@ -138,15 +139,27 @@ class OtherPaymentAPIView(AuthByTokenMixin, GenericAPIView):
                 return exception_response(e, serializer)
 
     
-class AllTransactionsAPIView(AuthByTokenMixin, GenericAPIView):
+class AllTransactionsAPIView(AuthByTokenMixin, ModelViewSet):
     serializer_class = AllTransactionSerializer
-    def get(self, request, *args, **kwargs):
+    queryset = AllTransaction.objects.all()
+    def list(self, request, *args, **kwargs):
         if request.user.is_owner:
-            queryset = Transaction.objects.filter(initiator__tenant__owner__owner = request.user)
+            queryset = AllTransaction.objects.filter(initiator__tenant__tenant__owner__owner = request.user.id)
+            print(queryset)
             serializer = AllTransactionSerializer(queryset, many=True)
             response = prepare_response(
                 success=True,
                 messge='fetched successfully',
                 data=serializer.data
             )
+            return Response(response)
+        
+        elif not request.user.is_owner:
+            queryset = AllTransaction.objects.filter(initiator__tenant__tenant = request.user)
+            serializer = AllTransactionSerializer(queryset, many=True)
+            response ={
+                "success":True,
+                "message" : 'Your transaction history fetched successfully',
+                "data":serializer.data
+            }
             return Response(response)

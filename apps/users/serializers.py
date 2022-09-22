@@ -1,8 +1,11 @@
 
 from rest_framework import serializers
 from dj_rest_auth.registration.serializers import RegisterSerializer
-
+from ocr.serializers import ElectricityUnitSerializerA
 from .models import CustomUser, EmailVerification, Tenant
+from rentapp.serializers import ComplaintSerializer
+from rest_flex_fields import FlexFieldsModelSerializer
+from payment.serializers import KhaltiVerifySerializer, OtherPaymentSerializer
 from allauth.account.adapter import get_adapter
 
 class CustomRegisterSerializer(RegisterSerializer):
@@ -66,8 +69,6 @@ class CustomUserDetailsSerializer(serializers.ModelSerializer):
 
 
 
-
-
 class TenantSerializer(serializers.ModelSerializer):
 
     def get_fname(self, obj):
@@ -122,3 +123,27 @@ class OwnerDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model =Tenant
         exclude = ('tenant', 'owner')
+
+    
+
+class AllTenantSerializer(FlexFieldsModelSerializer):
+
+    class Meta:
+        model = Tenant
+        fields = ('id', 'owner', 'tenant', 'electricity')
+
+        epandable_fields = {
+            "electricity": (ElectricityUnitSerializerA, {
+                'many':False,
+            }),
+            "complaints": (ComplaintSerializer, {
+                'many':True,
+            }),
+            "online_payment": (KhaltiVerifySerializer,{
+
+                'many':True,
+            }),
+            "cash_payment": (OtherPaymentSerializer,{
+                'many':True
+            })
+        }

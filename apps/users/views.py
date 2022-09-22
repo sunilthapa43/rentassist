@@ -5,7 +5,7 @@ from django.core.mail import send_mail
 from rentassist.utils.views import AuthByNoneMixin, AuthByTokenMixin
 from rest_framework.generics import GenericAPIView
 from users.models import CustomUser, EmailVerification, Owner, Tenant
-from .serializers import CustomUserDetailsSerializer, CustomuserSerializer, EmailVerifySerializer, OwnerDetailSerializer, TenantCreationSerializer, TenantSerializer
+from .serializers import AllTenantSerializer, CustomUserDetailsSerializer, CustomuserSerializer, EmailVerifySerializer, OwnerDetailSerializer, TenantCreationSerializer, TenantSerializer
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 
@@ -213,3 +213,9 @@ class MyOwnerDetailsView(AuthByTokenMixin, GenericAPIView):
                 "message": "Not registered as a Tenant"
             }
             return Response(response)
+
+
+
+class AllTenantDetailsViewSet(AuthByTokenMixin, ModelViewSet):
+    serializer_class = AllTenantSerializer
+    queryset = Tenant.objects.all()

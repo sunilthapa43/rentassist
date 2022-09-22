@@ -1,6 +1,6 @@
 from .models import ElectricityUnit, Ocr
 from rest_framework import serializers  
-
+from rest_flex_fields import FlexFieldsModelSerializer
 
 class ElectricityUnitSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,4 +15,8 @@ class RunOcrSerializer(serializers.ModelSerializer):
         model = Ocr
         fields = ('image',)
 
-    
+
+class ElectricityUnitSerializerA(FlexFieldsModelSerializer):
+    class Meta:
+        model = ElectricityUnit
+        fields = '__all__'

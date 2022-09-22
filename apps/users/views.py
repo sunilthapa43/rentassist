@@ -15,23 +15,28 @@ class TenantViewSet(AuthByTokenMixin, ModelViewSet):
     queryset = Tenant.objects.all()
 
     def destroy(self, request, pk=None, *args, **kwargs):
-        queryset = Tenant.objects.filter(owner = request.user.id)
+        queryset = Tenant.objects.filter(owner__owner = request.user.id)
+        print('destroy hit')
+        print(queryset)
         obj = get_object_or_404(queryset, pk=pk)
+        
+        print(obj)
         if not obj:
             response = prepare_response(
                 success=False,
                 message='Does not exist'
             )
             return Response(response)
-        serializer = TenantSerializer(obj)
-        obj.delete()
-        
-        response = prepare_response(
-            success=True,
-            message = 'successfully removed tenant',
-            data=serializer.data
-        )
-        return Response(response)
+        else:
+            serializer = TenantSerializer(obj)
+            obj.delete()
+            
+            response = prepare_response(
+                success=True,
+                message = 'successfully removed tenant',
+                data=serializer.data
+            )
+            return Response(response)
 
 
     def list(self, request, *args, **kwargs):

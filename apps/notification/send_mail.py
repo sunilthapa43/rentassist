@@ -16,6 +16,7 @@ def switcher(type):
         'A': 'Agreement Formed',
         'CE': 'Contract Extended',
         'E': 'Contract Expiry',
+        'CM': 'Configure Meter',
     }
     return to_subject.get(type)
 

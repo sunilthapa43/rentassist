@@ -11,7 +11,7 @@ def switcher(type):
         'D': 'Deadline Approach',
         'S': 'Deadline Skipped',
         'C': 'Complaint',
-        'P': 'Payment',
+        'T': 'Transaction',
         'O': 'Other Payment',
         'A': 'Agreement Formed',
         'CE': 'Contract Extended',

@@ -1,6 +1,7 @@
 from django.dispatch import receiver
 from django.db.models.signals import pre_save, post_save
 from documents.models import Agreement
+from payment.models import AllTransaction
 from rentapp.models import Complaint
 from .models import Notification
 # from documents.signals import agreement_deadline_approach, agreement_deadline_skipped
@@ -14,7 +15,7 @@ def switcher(type):
         'D': 'Deadline Approach',
         'S': 'Deadline Skipped',
         'C': 'Complaint',
-        'P': 'Payment',
+        'T': 'Transaction',
         'O': 'Other Payment',
         'A': 'Agreement Formed',
         'CE': 'Contract Extended',
@@ -98,3 +99,20 @@ def fcm_push_notification(sender, instance, created, weak=False, *args, **kwargs
 
         except Exception as e:
             print(e)
+
+
+
+@receiver(post_save, sender=AllTransaction)
+def notify_transaction(sender, instance, created, weak=False, *args, **kwargs):
+    if created:
+        med = 'Online Payment'
+        if instance.medium == 'C':
+            med = 'Cash Payment'
+        
+        obj = Notification.objects.create(
+            tenant=instance.initiator,
+            title= str(instance.initiator.tenant.first_name) + ' has paid rs '+ str(instance.amount) + ' via ' + med,
+            target=instance.initiator.owner.owner,
+            type='T',
+            is_read=False)
+        obj.save()

@@ -47,7 +47,8 @@ class KhaltiVerifyView(AuthByTokenMixin, GenericAPIView):
         # print(payment_response)
         # if 'idx' in payment_response:\
 
-        paid_amount=serializer.validated_data['paid_amount']           
+        paid_amount=serializer.validated_data['paid_amount'] 
+        paid_amount = paid_amount/100          
         payment_token=serializer.validated_data['payment_token']
         user = request.user
         t = Tenant.objects.get(tenant = user)
@@ -69,7 +70,7 @@ class KhaltiVerifyView(AuthByTokenMixin, GenericAPIView):
             c.setPageSize((300,300))
             # c.circle(150,150,100)
             
-            c.drawImage(image_path, x=120, y=250, width=50, height=50)
+            # c.drawImage(image_path, x=120, y=250, width=50, height=50)
             info_obj = c.beginText(50,220)
             username = str(t.tenant.first_name) + ' ' + str(t.tenant.last_name)
             paid_to = str(t.owner.owner.first_name) + ' ' + str(t.owner.owner.last_name)

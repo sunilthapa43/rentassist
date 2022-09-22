@@ -20,7 +20,7 @@ class ElectricityUnitView(AuthByTokenMixin, GenericAPIView):
             try:
                 tenant = serializer.validated_data['tenant']
                 current_reading = serializer.validated_data['current_reading']
-                obj = ElectricityUnit.objects.get(tenant=tenant) 
+                obj = ElectricityUnit.objects.filter(tenant=tenant).first()
                 previous_meter_reading = obj.current_reading if obj.current_reading else 0
                 previous_month_units =obj.current_units
                 obj.current_reading = current_reading

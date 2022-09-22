@@ -20,7 +20,7 @@ from django.http import FileResponse
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
-path_to_image = 'static/images/logo.png'
+path_to_image = 'apps/payment/logo/logo.png'
 image_path = os.path.join(BASE_DIR, path_to_image) 
 def background(c):
     c.setFillColorRGB(1,0,0)
@@ -70,7 +70,7 @@ class KhaltiVerifyView(AuthByTokenMixin, GenericAPIView):
             c.setPageSize((300,300))
             # c.circle(150,150,100)
             
-            # c.drawImage(image_path, x=120, y=250, width=50, height=50)
+            c.drawImage(image_path, x=120, y=250, width=50, height=50)
             info_obj = c.beginText(50,220)
             username = str(t.tenant.first_name) + ' ' + str(t.tenant.last_name)
             paid_to = str(t.owner.owner.first_name) + ' ' + str(t.owner.owner.last_name)

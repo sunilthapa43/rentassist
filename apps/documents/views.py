@@ -15,7 +15,7 @@ class AgreementViewSet(AuthByTokenMixin, ModelViewSet):
     def list(self, request, *args, **kwargs):
         user = request.user
         if user.is_owner:
-            queryset = Agreement.objects.filter(tenant__owner = user.id)
+            queryset = Agreement.objects.filter(tenant__tenant__tenant__owner__owner = user.id)
             serializer = AgreementSerializer(queryset, many=True)
             response = {
                 "success":True,
@@ -25,11 +25,13 @@ class AgreementViewSet(AuthByTokenMixin, ModelViewSet):
             return Response(response)
         
         elif not user.is_owner:
+            
             try:
-                print(type(request.user), request.user.username)
                 # _queryset = Agreement.objects.get(tenant__tenant = request.user.id)
-                queryset = Agreement.objects.get(tenant__tenant = request.user.id)
-                owner = queryset.tenant.owner
+                print('comes here')
+                queryset = Agreement.objects.filter(tenant__tenant = request.user).first()
+                print(queryset)
+                owner = queryset.tenant.owner.owner.first_name
                 print(owner)
                 serializer = AgreementSerializer(queryset, many=False)
                 response = {
@@ -39,7 +41,7 @@ class AgreementViewSet(AuthByTokenMixin, ModelViewSet):
                 }
                 return Response(response)
             except Exception as e:
-                return exception_response(e, serializer.errors)
+                return exception_response(e)
     
         response = {
             "success":False,

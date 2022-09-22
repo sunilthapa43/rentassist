@@ -19,19 +19,32 @@ def switcher(type):
         'A': 'Agreement Formed',
         'CE': 'Contract Extended',
         'E': 'Contract Expiry',
+        'CM': 'Configure Meter',
     }
     return to_subject.get(type)
 
 
 @receiver(post_save, sender = Complaint)
 def post_complain(sender, instance, created, weak=False, *args, **kwargs):
-    obj = Notification.objects.create(tenant=instance.tenant,
-    target=instance.tenant.owner.owner,
-    type='C',
-    title='Complaint from '+ str(instance.tenant.tenant.first_name) ,
-    is_read=False
-    )
-    obj.save()
+    if created:
+        obj = Notification.objects.create(tenant=instance.tenant,
+        target=instance.tenant.owner.owner,
+        type='C',
+        title='Complaint from '+ str(instance.tenant.tenant.first_name),
+        deep_link = f'rentassist2021.herokuapp.com/api/complaints/{instance.id}',
+        is_read=False
+        )
+        obj.save()
+    else:
+        obj = Notification.objects.create(tenant=instance.tenant,
+        target=instance.tenant.tenant,
+        type='C',
+        title=f'Your complaint cmp{instance.id} has been addressed',
+        deep_link = f'rentassist2021/api/complaints/{instance.id}',
+        # str(instance.tenant.tenant.first_name) ,
+        is_read=False
+        )
+        obj.save()
 
 
 

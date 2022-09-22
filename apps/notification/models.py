@@ -13,6 +13,7 @@ NOTIFICATION_TYPES = [
     ('A', 'Agreement Formed'),
     ('CE', 'Contract Extended'),
     ('E', 'Contract Expiry'),
+    ('CM', 'Configure Meter'),
     
 ]
 

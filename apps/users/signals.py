@@ -1,6 +1,7 @@
 from django.dispatch import receiver
 from django.core.mail import send_mail
 from django.db.models.signals import post_save, pre_save
+from notification.models import Notification
 
 from rentassist.settings import EMAIL_HOST_USER
 from .models import CustomUser, EmailVerification, Owner, Tenant
@@ -50,3 +51,16 @@ def verification(sender, instance, created, weak=False, *args, **kwargs):
     obj = EmailVerification.objects.create(user=instance, token = otp)
     obj.save()
 
+
+
+@receiver(post_save, sender=Tenant)
+def config_batti(sender, instance, created, weak=False, *args, **kwargs):
+    if created:
+        obj = Notification.objects.create(
+            tenant = instance,
+            target = instance.owner.owner,
+            deep_link = f'rentassist2021.herokuapp.com/ocr/config-meter/',
+            title = f'{instance.tenant} has registered as your tenant. Please configure the meter for future references.',
+            type = 'CM'
+        )
+        obj.save()

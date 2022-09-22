@@ -45,7 +45,7 @@ class FetchAllMessages(AuthByTokenMixin, ModelViewSet):
     queryset = Message.objects.all()
 
     def list(self, request, *args, **kwargs):
-        queryset = Message.objects.filter(receiver = request.user.id).order_by('sender', '-sent_at').distinct('sender')
+        queryset = Message.objects.filter(receiver = request.user.id).order_by('sender', '-id').distinct('sender')
         serializer = AllMessageSerializers(queryset, many = True)
 
         response = prepare_response(
@@ -70,8 +70,8 @@ class GetConversationViewSet(AuthByTokenMixin, ModelViewSet):
             }
             return Response(response)
         
-        sent_message = Message.objects.filter(sender=sender, receiver=receiver).order_by('-sent_at')
-        received_message = Message.objects.filter(sender=receiver, receiver=sender).order_by('-sent_at')
+        sent_message = Message.objects.filter(sender=sender, receiver=receiver).order_by('-id')
+        received_message = Message.objects.filter(sender=receiver, receiver=sender).order_by('-id')
         
         if sent_message.exists() or received_message.exists():
             for m in received_message:

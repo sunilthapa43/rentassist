@@ -1,15 +1,16 @@
 from datetime import datetime
 from decimal import Decimal
+from phonenumbers import is_valid_number
 from yaml import serialize
 from payment.khalti import Khalti
 from users.models import Tenant
 from rentassist.settings import BASE_DIR
 from rentassist.utils.views import AuthByTokenMixin
-from .serializers import AllTransactionSerializer, KhaltiVerifySerializer, OtherPaymentSerializer
+from .serializers import AllTransactionSerializer, DepositSerializer, KhaltiVerifySerializer, OtherPaymentSerializer
 from rentassist.utils.response import exception_response, prepare_response
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
-from .models import AllTransaction, Transaction
+from .models import AllTransaction, Deposit, Transaction
 from rest_framework.viewsets import ModelViewSet
 
 
@@ -163,4 +164,28 @@ class AllTransactionsAPIView(AuthByTokenMixin, ModelViewSet):
                 "message" : 'Your transaction history fetched successfully',
                 "data":serializer.data
             }
+            return Response(response)
+
+        
+class WithDrawView(AuthByTokenMixin, GenericAPIView):
+    serializer_class = DepositSerializer
+    queryset = Deposit.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        serializer = DepositSerializer(data=request.data)
+        if serializer.is_valid():
+            obj = Deposit.objects.get(owner__owner = request.user)
+            initial_amount = obj.amount
+            obj.amount = 0
+            obj.save()
+            response = prepare_response(
+                success =True,
+                message =  f'successfully withdrawn amount Rs. {initial_amount}'
+            )
+            return Response(response)
+        else:
+            response = prepare_response(
+                success=False,
+                message = 'Not found'
+            )
             return Response(response)

@@ -47,6 +47,14 @@ class AllTransaction(models.Model):
     def __str__(self):
         return f'{self.initiator} pays Rs. {self.amount} via {self.medium}'
 
+    
+class Deposit(models.Model):
+    owner = models.ForeignKey('users.Owner',verbose_name='Owner User', related_name='deposit',on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f'{self.owner.owner.first_name} has Rs {self.amount}'
+
 
 
 

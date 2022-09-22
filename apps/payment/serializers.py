@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import AllTransaction, OtherPayment, Transaction
+from .models import AllTransaction, Deposit, OtherPayment, Transaction
 
 class KhaltiVerifySerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,3 +23,11 @@ class AllTransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = AllTransaction
         fields = '__all__'
+
+
+
+class DepositSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Deposit
+        exclude = ('owner', 'amount')

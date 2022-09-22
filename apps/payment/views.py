@@ -1,3 +1,5 @@
+from datetime import datetime
+from decimal import Decimal
 from yaml import serialize
 from payment.khalti import Khalti
 from users.models import Tenant
@@ -23,91 +25,93 @@ image_path = os.path.join(BASE_DIR, path_to_image)
 def background(c):
     c.setFillColorRGB(1,0,0)
     c.setFont('Helvetica-Bold', 15)
-    c.rect(5,5,652,792,fill=1)
+    c.rect(5,5,652,792,fill=0)
 
 class KhaltiVerifyView(AuthByTokenMixin, GenericAPIView):
     serializer_class=KhaltiVerifySerializer
-    
+    queryset = Transaction.objects.all()
     def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        serializer = KhaltiVerifySerializer(data=request.data)
         if not serializer.is_valid():
             response = prepare_response(success=False,
                                         message='Invalid data',
                                         errors=serializer.errors)
             return Response(response, status=400)
 
-        khalti = Khalti(user=self.request.user,
-                        token=serializer.data['token'],
-                        amount=serializer.data['paid_amount'],
-                        )
+        # khalti = Khalti(user=self.request.user,
+        #                 token=serializer.validated_data['payment_token'],
+        #                 amount=serializer.validated_data['paid_amount'],
+        #                 )
 
-        payment_response = khalti.verify_request()
-        print(payment_response)
-        if 'idx' in payment_response:
-            Transaction.objects.create(
-                initiator=self.request.user,
-                paid_amount=payment_response['amount'],
-                payment_token=payment_response['token'],
-                transaction_response=payment_response)
+        # payment_response = khalti.verify_request()
+        # print(payment_response)
+        # if 'idx' in payment_response:\
 
-            response = prepare_response(success=True,
-                                        message='Payment successful',
-                                        data=payment_response)
-            return Response(response, status=200)
+        paid_amount=serializer.validated_data['paid_amount']           
+        payment_token=serializer.validated_data['payment_token']
+        user = request.user
+        t = Tenant.objects.get(tenant = user)
+        
+        print(t.tenant.tenant.owner)
+        obj = Transaction.objects.create(
+            initiator=t,
+            paid_amount=paid_amount,         
+            payment_token= payment_token
+            )
+        obj.save()
+        if obj:
+            # create buffer:
+            buffer = io.BytesIO()
+            # buttom up =1 for image to be not inverted
+            c = canvas.Canvas(buffer, pagesize=letter, bottomup=1)
+            background(c)
+            # c.translate(cm,cm)
+            c.setPageSize((300,300))
+            # c.circle(150,150,100)
+            
+            c.drawImage(image_path, x=120, y=250, width=50, height=50)
+            info_obj = c.beginText(50,220)
+            username = str(t.tenant.first_name) + ' ' + str(t.tenant.last_name)
+            paid_to = str(t.owner.owner.first_name) + ' ' + str(t.owner.owner.last_name)
+            time =  datetime.now()
+            paid_at = str(time.strftime("%Y-%m-%d  %H:%M:%S"))
+            print(paid_to)
+            # amount = request.GET.get['amount']
+            transaction = Transaction.objects.get(initiator = t, transaction_status='SUCCESS')
+            print(transaction)
+        
+            lines = [
+        
+            ]
+            
+            lines.append('TRANSCATION   DETAILS       '),
+            lines.append('             '),
+            lines.append('initiator : ' + username),
+            
+            lines.append('paid to:  ' + paid_to)
+            lines.append('paid at :    ' + paid_at)
+            
+            lines.append('amount:  ' + str(paid_amount))
+            lines.append('more details: ')
+            lines.append('token:   ' + payment_token)
+            lines.append('currency:   NPR')
+    
+            for line in lines:
+                info_obj.textLine(line)    
+            c.drawText(info_obj)
+            c.showPage()
+            c.save()
+            buffer.seek(0)
+        
+            return FileResponse(buffer, as_attachment=True, filename='invoice.pdf')
+        
+
         else:
             response = prepare_response(success=False,
-                                        message='Payment failed',
-                                        data=payment_response)
-            return Response(response, status=400)
-    
-    def get(self, request, *args, **kwargs):
-    # TODO: check the response of the khalti verification then provide the details
+                                        message='Payment Unsuccessful, Try Agaiin',
+                                        data=serializer.data)
+            return Response(response)
 
-        # create buffer:
-        buffer = io.BytesIO()
-        # buttom up =1 for image to be not inverted
-        c = canvas.Canvas(buffer, pagesize=letter, bottomup=1)
-        background(c)
-        # c.translate(cm,cm)
-        c.setPageSize((300,300))
-        # c.circle(150,150,100)
-        
-        c.drawImage(image_path, x=0, y=0, width=300, height=300)
-        info_obj = c.beginText(50,250)
-        initiator = request.user
-        print(initiator)
-        username = request.user.first_name
-        _tenant = Tenant.objects.get(tenant=initiator)
-        paid_to = _tenant.owner.owner.first_name
-        print(paid_to)
-        # amount = request.GET.get['amount']
-        transaction = Transaction.objects.get(initiator__tenant =initiator, transaction_status='SUCCESS')
-        print(transaction)
-    
-        lines = [
-    
-        ]
-        
-        lines.append('TRANSCATION   DETAILS       '),
-        lines.append('             '),
-        lines.append('initiator : ' + username),
-        lines.append('')
-        lines.append('paid to:  ' + paid_to)
-
-        lines.append('')
-        lines.append('amount:  ' + str(transaction.payment_response['amount']))
-        lines.append('more details: ')
-        lines.append('token:   ' + transaction.payment_response['token'])
-        lines.append('currency:  '+ transaction.payment_response['currency'])
-
-        for line in lines:
-            info_obj.textLine(line)    
-        c.drawText(info_obj)
-        c.showPage()
-        c.save()
-        buffer.seek(0)
-    
-        return FileResponse(buffer, as_attachment=True, filename='invoice.pdf')
 
 
 class OtherPaymentAPIView(AuthByTokenMixin, GenericAPIView):

@@ -1,7 +1,7 @@
 
 import os
 import requests
-my_test_key = 'test_secret_key_628669de2b844a73b0b5a8c86db738ff'
+my_test_key = 'Key test_secret_key_628669de2b844a73b0b5a8c86db738ff'
 
 class Khalti:
 
@@ -19,7 +19,8 @@ class Khalti:
         API
         :return: The response is a dictionary with the following keys:
         """
-        url = 'https://khalti.com/api/v2/payment/verify'
+        url = 'https://khalti.com/api/v2/payment/verify/'
+        method = 'POST'
         headers = {
             'Authorization': my_test_key,
             'Content-Type': 'application/json'
@@ -30,5 +31,5 @@ class Khalti:
                 self.amount  # In Paisa
         }
         response = requests.post(url, payload, headers=headers)
-        self.response = response.json()
-        return self.response
+        print(response)
+        return response

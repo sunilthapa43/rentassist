@@ -17,7 +17,6 @@ from rest_framework.parsers import MultiPartParser
 
 class ElectricityUnitView(AuthByTokenMixin, GenericAPIView):
     serializer_class = ElectricityUnitSerializer
-    parser_classes = [MultiPartParser]
     def post(self, request, *args, **kargs):
         serializer = self.get_serializer(data=request.data)
 
@@ -93,7 +92,7 @@ class ConfigureMeterAPIView(AuthByTokenMixin, GenericAPIView):
                 message="successfully added electricity details",
                 data= serializer.data
             )
-            return response(response)
+            return Response(response)
             
         except Exception as e:
             return exception_response(e, serializer)

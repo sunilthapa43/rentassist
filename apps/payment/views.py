@@ -76,12 +76,12 @@ class KhaltiVerifyView(AuthByTokenMixin, GenericAPIView):
         info_obj = c.beginText(50,250)
         initiator = request.user
         print(initiator)
-        username = request.user.username
+        username = request.user.first_name
         _tenant = Tenant.objects.get(tenant=initiator)
-        paid_to = _tenant.owner.username
+        paid_to = _tenant.owner.owner.first_name
         print(paid_to)
         # amount = request.GET.get['amount']
-        transaction = Transaction.objects.get(initiator=initiator, transaction_status='SUCCESS')
+        transaction = Transaction.objects.get(initiator__tenant =initiator, transaction_status='SUCCESS')
         print(transaction)
     
         lines = [

@@ -20,3 +20,10 @@ class AgreementSerializer(ModelSerializer):
             'electricity_rate',
             'picture'
         )
+        
+
+class GetAgreementSerializer(ModelSerializer):
+
+    class Meta:
+        model = Agreement
+        fields = '__all__'

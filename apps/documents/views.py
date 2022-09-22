@@ -6,7 +6,7 @@ from rentassist.utils.response import exception_response, prepare_response
 from rentassist.utils.views import AuthByTokenMixin
 from .models import Document, Agreement
 from rest_framework.viewsets import ModelViewSet
-from .serializers import DocumentSerializer, AgreementSerializer
+from .serializers import DocumentSerializer, AgreementSerializer, GetAgreementSerializer
 
 
 class AgreementViewSet(AuthByTokenMixin, ModelViewSet):
@@ -16,7 +16,7 @@ class AgreementViewSet(AuthByTokenMixin, ModelViewSet):
         user = request.user
         if user.is_owner:
             queryset = Agreement.objects.filter(tenant__tenant__tenant__owner__owner = user.id)
-            serializer = AgreementSerializer(queryset, many=True)
+            serializer = GetAgreementSerializer(queryset, many=True)
             response = {
                 "success":True,
                 "message":"Successfully fetched agreements",
@@ -33,7 +33,7 @@ class AgreementViewSet(AuthByTokenMixin, ModelViewSet):
                 print(queryset)
                 owner = queryset.tenant.owner.owner.first_name
                 print(owner)
-                serializer = AgreementSerializer(queryset, many=False)
+                serializer = GetAgreementSerializer(queryset, many=False)
                 response = {
                     "success":True,
                     "message":f"Successfully fetched your agreement with the owner: MR. {owner}",

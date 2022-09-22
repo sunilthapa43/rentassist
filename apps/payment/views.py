@@ -77,10 +77,6 @@ class KhaltiVerifyView(AuthByTokenMixin, GenericAPIView):
             time =  datetime.now()
             paid_at = str(time.strftime("%Y-%m-%d  %H:%M:%S"))
             print(paid_to)
-            # amount = request.GET.get['amount']
-            transaction = Transaction.objects.get(initiator = t, transaction_status='SUCCESS')
-            print(transaction)
-        
             lines = [
         
             ]

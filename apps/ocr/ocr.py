@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 from rentassist.settings import BASE_DIR
 
-#######   training part    ###############
+#train the model
 sample_path = os.path.join(BASE_DIR, 'apps/ocr/data/generalsamples.data')
 responses_path = os.path.join(BASE_DIR, 'apps/ocr/data/generalresponses.data')
 
@@ -15,7 +15,7 @@ responses = responses.reshape((responses.size, 1))
 model = cv2.ml.KNearest_create()
 model.train(samples, cv2.ml.ROW_SAMPLE, responses)
 
-############################# testing part  #########################
+#test part
 
 
 def sort_contours(cnts, method="left-to-right"):

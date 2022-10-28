@@ -84,6 +84,7 @@ CRON_CLASSES = [
     # ...
 ]
 MIDDLEWARE = [
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -95,6 +96,7 @@ MIDDLEWARE = [
 
     'corsheaders.middleware.CorsMiddleware',
     "whitenoise.middleware.WhiteNoiseMiddleware",
+    'django.middleware.cache.FetchFromCacheMiddleware',
 ]
 
 ROOT_URLCONF = 'rentassist.urls'
@@ -307,6 +309,14 @@ BATON = {
 
 #backup redis in case of expiry
 REDIS_BACKUP_URI = 'redis://:JNGI3rzll7imo8vcbDLFk7bYe8qkE4mI@redis-11450.c264.ap-south-1-1.ec2.cloud.redislabs.com:11450'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': REDIS_BACKUP_URI,
+        
+    }
+}
 
 # REDIS CONFIGS
 DATABASE_NUMBER = 11224858

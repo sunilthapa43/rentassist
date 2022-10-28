@@ -28,7 +28,7 @@ class DueRentView(AuthByTokenMixin, GenericAPIView):
         queryset = Rent.objects.filter(tenant__owner__owner = request.user.id)
         print(queryset)
         due_amount = queryset.aggregate(Sum('due_amount'))
-        due_amount = 5000
+        
         return Response(due_amount)
 
 class ComplaintViewSet(AuthByTokenMixin, viewsets.ModelViewSet):

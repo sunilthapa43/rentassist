@@ -96,7 +96,7 @@ MIDDLEWARE = [
 
     'corsheaders.middleware.CorsMiddleware',
     "whitenoise.middleware.WhiteNoiseMiddleware",
-    'django.middleware.cache.FetchFromCacheMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware'
 ]
 
 ROOT_URLCONF = 'rentassist.urls'
@@ -313,7 +313,7 @@ REDIS_BACKUP_URI = 'redis://:JNGI3rzll7imo8vcbDLFk7bYe8qkE4mI@redis-11450.c264.a
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-        'LOCATION': REDIS_BACKUP_URI,
+        'LOCATION': 'redis::/',
         
     }
 }
@@ -323,6 +323,18 @@ DATABASE_NUMBER = 11224858
 REDIS_PORT = 18752
 REDIS_KEY = 'BVcojnfKFHsr6N0zOK9keokfoxE0H6jt'
 REDIS_HOSTNAME = 'redis://:' +  REDIS_KEY + '@redis-18752.c81.us-east-1-2.ec2.cloud.redislabs.com:18752'
+
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379'
+        
+    }
+}
+
+
 
 # Celery Configuration Options
 CELERY_TIMEZONE = "UTC"
